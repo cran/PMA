@@ -1,0 +1,1 @@
+export(PMD, PMD.cv, SPC.cv, print.spccv, plot.spccv, SPC, print.spc, print.ccal1fl, print.ccaperml1fl,CCA,CCA.permute,print.ccaperml1l1, print.ccal1l1,print.pmdl1fl, print.pmdl1flcv,print.pmdl1l1, print.pmdl1l1cv,PlotCGH, plot.pmdl1l1cv, plot.pmdl1flcv,plot.ccaperml1l1,plot.ccaperml1fl)
