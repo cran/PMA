@@ -172,14 +172,11 @@ print(out)
 
 # now, do CCA with type="ordered"
 # Example involving the breast cancer data: gene expression + CGH
-set.seed(1)
+set.seed(22)
 data(breastdata)
 attach(breastdata)
 dna <- t(dna)
 rna <- t(rna)
-# Use only genes in gene exp. data w/high variance, to speed up example
-genedesc <- genedesc[apply(rna,2,sd)>quantile(apply(rna,2,sd),.7)]
-rna <- rna[,apply(rna,2,sd)>quantile(apply(rna,2,sd),.7)]
 # Run CCA(L1,FL) on Chromosome 1 only
 perm.out <- CCA.permute(rna,dna[,chrom==1],type="ordered",nperms=5)
 print(perm.out)
