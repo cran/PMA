@@ -12,7 +12,7 @@ CGH.SparseCCA <- function(x,y,lam1,lam2,sumabsu,chrom=NULL,niter=20,v=NULL,trace
       u <- soft(argu,lamu)/l2n(soft(argu,lamu))
       vnew <- numeric(ncol(y))
       xu <- x%*%u
-      for(j in sort(unique(chrom))){
+      for(j in unique(chrom)){
         yxu <- as.numeric(t(y[,chrom==j])%*%xu)
         coefs <- FLSA(yxu/l2n(yxu),lambda1=lam1,lambda2=lam2)
         vnew[chrom==j] <- coefs
@@ -27,6 +27,7 @@ CGH.SparseCCA <- function(x,y,lam1,lam2,sumabsu,chrom=NULL,niter=20,v=NULL,trace
 }
 
 CCAL1FL <- function(x,z,K=1,sumabsu=5,lambda=NULL,chrom=NULL,niter=20,v=NULL, trace=TRUE, standardize=TRUE, xnames=NULL, znames=NULL, upos=FALSE, uneg=FALSE){
+  if(!is.null(chrom) && !is.numeric(chrom)) stop("Chrom must be numeric.")
   call <- match.call()
   if(nrow(x)!=nrow(z)) stop("x and z must have same number of rows")
   if(standardize){
