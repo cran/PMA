@@ -12,7 +12,7 @@ Penalized Multivariate Analysis
 sparse canonical correlations analysis. All are described in the paper "A penalized matrix
 decomposition, with applications to sparse principal components and
 canonical correlation analysis", by D Witten, R Tibshirani, and T
-Hastie. The paper is available at <http://www-stat.stanford.edu/~dwitten>.
+Hastie, and published in \emph{Biostatistics} (2009). The paper is available at <http://www-stat.stanford.edu/~dwitten>.
 
 The main functions are as follows:
 (1) PMD
@@ -42,7 +42,7 @@ License: \tab GPL >= 2 \cr
 }
 \references{ Witten, Tibshirani and Hastie (2009) A penalized matrix
   decomposition, with applications to sparse principal components and
-  canonical correlation analysis. Submitted.
+  canonical correlation analysis. \emph{Biostatistics} 10(3): 515-534.
 <http://www-stat.stanford.edu/~dwitten>
 }
 

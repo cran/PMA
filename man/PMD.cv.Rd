@@ -7,7 +7,7 @@ Performs cross-validation to select tuning parameters for rank-1 PMD, the penali
 \usage{
 PMD.cv(x, type=c("standard", "ordered"), sumabss=seq(0.1,0.7,len=10),
 sumabsus=NULL, lambda=NULL, nfolds=5, niter=5, v=NULL, chrom=NULL, nuc=NULL,
-trace=TRUE, center=TRUE)
+trace=TRUE, center=TRUE, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE)
 }
 \arguments{
   \item{x}{Data matrix of dimension $n x p$, which can contain NA
@@ -55,6 +55,14 @@ trace=TRUE, center=TRUE)
     \item{trace}{Print out progress as iterations are performed? Default
     is TRUE.}
   \item{center}{Subtract out mean of x? Default is TRUE}
+  \item{upos}{Constrain the elements of u to be positive? TRUE or
+    FALSE.}
+  \item{uneg}{Constrain the elements of u to be negative? TRUE or
+    FALSE.}
+  \item{vpos}{Constrain the elements of v to be positive? TRUE or
+    FALSE. Cannot be used if type is "ordered".}
+  \item{vneg}{Constrain the elements of v to be negative? TRUE or
+    FALSE. Cannot be used if type is "ordered."}
 }
 \details{
 If type is "standard", then lasso ($L_1$) penalties (promoting sparsity) are placed on u and

@@ -4,11 +4,10 @@
   analysis using the penalized matrix decomposition.}
 \description{
 This function can be used to automatically select tuning parameters for
-sparse CCA using the penalized matrix decompostion. For each data set x
-and z, two types are possible: (1) type "standard", which does not assume any
-ordering of the columns of the data set, and (2) type "ordered", which assumes that
-columns of the data set are ordered and thus that corresponding
-canonical vector should be both sparse and
+sparse CCA using the penalized matrix decompostion. Two types of sparse
+CCA are available: (1) type="standard", which does not assume any
+ordering of the columns of Z, and (2) type="ordered", which assumes that
+columns of Z are ordered and thus that v should be both sparse and
 smooth (e.g. CGH data).
 
 For X and Z, the
@@ -25,10 +24,9 @@ factors $(u*_i, v*_i)$.
 obtain factors u and v.
 (4) Compute $c*_i=cor(X*_i u*_i,Z v*_i)$ and $c=cor(Xu,Zv)$.
 (5) Use Fisher's transformation to convert these correlations into
-random variables that are approximately normally distributed. Let
-Fisher(c) denote the Fisher transformation of c.
+random variables that are approximately normally distributed.
 (6) Compute a
-z-statistic for Fisher(c), using $(Fisher(c)-mean(Fisher(c*)))/sd(Fisher(c*))$. The larger the
+z-statistic for c, using $(c-mean(c*))/sd(c*)$. The larger the
 z-statistic, the "better" the corresponding tuning parameter value.
 
 This function also gives the p-value for each pair of canonical variates
@@ -37,12 +35,13 @@ computed as the fraction of $c*_i$'s that exceed c (using the notation of
 the previous paragraph).
 
 Using this function, only the first left and right canonical variates
-are considered in selection of the tuning parameter.
+are cross-validated.
 }
 \usage{
-CCA.permute(x,z,typex=c("standard", "ordered"),typez=c("standard","ordered"), penaltyxs=NULL, penaltyzs=NULL,
-niter=3,v=NULL,trace=TRUE,nperms=25, standardize=TRUE, chromx=NULL,
-chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL, y=NULL, cens=NULL)
+CCA.permute(x,z,type=c("standard", "ordered"),
+sumabss=NULL,sumabsus=NULL, 
+lambda=NULL,niter=3,v=NULL,trace=TRUE,nperms=25, standardize=TRUE,
+chrom=NULL, nuc=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL,y=NULL,cens=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,32 +49,27 @@ chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL, y=NULL,
   \item{z}{Data matrix; samples are rows and columns are
       features. Note that x and z must have the same number of rows, but
       may (and generally will) have different numbers of columns.}
-    \item{typex}{Are the columns of x unordered (type="standard") or
-    ordered (type="ordered")? If "standard", then a lasso penalty is
-    applied to v, to enforce sparsity. If "ordered"  (generally used
-    for CGH data), then a fused  lasso penalty is applied, to enforce both
-    sparsity and smoothness.}
-    \item{typez}{Are the columns of z unordered  (type="standard") or
-   ordered (type="ordered")? If "standard",   then a lasso penalty is
-   applied to v, to enforce sparsity. If "ordered" (generally used
-    for CGH data), then a fused lasso penalty is applied, to
-    enforce both sparsity and smoothness.}
-   \item{penaltyxs}{The set of x penalties to be considered. If
-     typex="standard", then the L1 bound on u is penaltyxs*sqrt(ncol(x)). If "ordered",
-     then it's the lambda for the fused lasso penalty. The user
-     can specify a single value or a
-     vector of values. If penaltyxs is a vector and penaltyzs is a
-     vector, then the vectors must have the same length. If NULL, then
-     the software will automatically choose a single lambda value if
-     type is "ordered", or a grid of (L1 bounds)/sqrt(ncol(x)) if type is "standard".}
-      \item{penaltyzs}{The set of z penalties to be considered. If
-     typez="standard", then the L1 bound on v is penaltyzs*sqrt(ncol(z)). If "ordered",
-     then it's the lambda for the fused lasso penalty. The user
-     can specify a single value or a
-     vector of values. If penaltyzs is a vector and penaltyzs is a
-     vector, then the vectors must have the same length. If NULL, then
-     the software will automatically choose a single lambda value if
-     type is "ordered", or a grid of (L1 bounds)/sqrt(ncol(z)) if type is "standard".}
+    \item{type}{One of "standard" or "ordered". If columns of v are
+      ordered (e.g. CGH spots ordered along the chromosome) then
+      "ordered", otherwise use "standard". "standard" will result in a
+      lasso ($L_1$) penalty on v, which will result in
+      smoothness. "ordered" will result in a fused lasso penalty on v,
+      yielding both sparsity and smoothness.}
+       \item{sumabss}{Used only if type="standard". Controls both sumabsu and sumabsv at once. Must be
+     between 0 and 1. Sumabss values are converted into values for
+     sumabsu and sumabsv as follows: For each sumabs value, sumabsu will
+     be set to sqrt(ncol(x))*sumabs and sumabsv will be set to
+     sqrt(ncol(z))*sumabs.}
+   \item{sumabsus}{Used only if type="ordered". Gives a range of values
+     of sumabsu to be tried out in the permutation scheme. Sumabsu
+     controls sparsity of u: it 
+     is the bound on the sum of absolute values of elements of u. If
+     NULL, then 10 values that are spaced between 0.01*ncol(x)
+     and 0.9*ncol(x) are used.}
+   \item{lambda}{Used only if type="ordered". If NULL, then it's chosen
+     adpatively from data. This controls the fused lassso penalty on v,
+     which takes the form $lambda(sum_j |v_j| + sum_j |v_j -
+     v_(j-1)|)$. }
   \item{niter}{How many iterations should be performed each time CCA is
     called? Default is 3, since an approximate estimate of u and v is
     acceptable in this case, and otherwise this function can be quite time-consuming.}
@@ -93,20 +87,21 @@ chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL, y=NULL,
   \item{standardize}{Should the columns of X and Z be centered (to have mean
     zero)
     and scaled (to have standard deviation 1)? Default is TRUE.}
-    \item{chromx}{Used only if typex="ordered"; a vector of length ncol(x)
+  \item{chrom}{Used only if type="ordered"; a vector of length ncol(z)
     that allows you to specify which chromosome each CGH spot is on. If
     NULL, then it is assumed that all CGH spots are on same chromosome.}
-    \item{chromz}{Used only if typex="ordered"; a vector of length ncol(z)
-    that allows you to specify which chromosome each CGH spot is on. If
-    NULL, then it is assumed that all CGH spots are on same chromosome.}
+  \item{nuc}{Used only if type="ordered", for plotting output of
+    CCA.permute. A vector of length ncol(z) that allows you to specify
+    nucleotide position of each CGH spot. If NULL, then it is assumed
+    that all CGH spots are equally spaced.}
   \item{upos}{If TRUE, then require all elements of u to be positive in
-    sign. Default is FALSE. Can only be used if type is standard.}
+    sign. Default is FALSE.}
   \item{uneg}{If TRUE, then require all elements of u to be negative in
-    sign. Default is FALSE. Can only be used if type is standard.}
-  \item{vpos}{If TRUE, then require all
-    elements of v to be positive in sign. Default is FALSE.  Can only be used if type is standard.}
-  \item{vneg}{If TRUE, then require all
-    elements of v to be negative in sign. Default is FALSE. Can only be used if type is standard.}
+    sign. Default is FALSE.}
+  \item{vpos}{Only use if type="standard". If TRUE, then require all
+    elements of v to be positive in sign. Default is FALSE.}
+  \item{vneg}{Only use if type="standard". If TRUE, then require all
+    elements of v to be negative in sign. Default is FALSE.}
   \item{outcome}{If you would like to incorporate a phenotype into CCA
     analysis - that is, you wish to find features that are correlated
     across the two data sets and also correlated
@@ -121,16 +116,16 @@ chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL, y=NULL,
 }
 \details{
   Note that x and z must have same number of rows. This function performs
- just a one-dimensional search in tuning parameter space, even if
- penaltyxs and penaltyzs both are vectors: the pairs
- (penaltyxs[1],penaltyzs[1]),(penaltyxs[2],penaltyzs[2]),.... are considered. 
+ just a one-dimensional search in tuning parameter space: the user
+  specifies a vector of sumabs values to be tried (if type="standard") or
+  a vector of sumabsu values to be tried (if type="ordered"). 
 }
 \value{
   \item{zstat}{The vector of z-statistics, one per element of sumabss.}
   \item{pvals}{The vector of p-values, one per element of sumabss.}
- \item{bestpenaltyx}{The x penalty that
-   resulted in the highest z-statistic.}
-  \item{bestpenaltyz}{The z penalty that
+ \item{bestsumabss}{If type="standard": The value of sumabss that resulted in the highest
+   z-statistic.}
+ \item{bestsumabsu}{If type="ordered": The value of sumabsus that
    resulted in the highest z-statistic.}
  \item{cors}{The value of cor(Xu,Zv) obtained for each value of
     sumabss.}
@@ -145,6 +140,10 @@ chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL, y=NULL,
     to data (X,Z) for each value of sumabss.}
   \item{nnonzerouv}{Number of non-zero v's resulting from applying CCA
     to data (X,Z) for each value of sumabss.}
+  \item{nnonzerous.perm}{Average number of non-zero u's resulting from applying CCA
+    to data (X*,Z) for each value of sumabss.}
+  \item{nnonzerovs.perm}{Average number of non-zero v's resulting from applying CCA
+    to data (X*,Z) for each value of sumabss.}
   \item{v.init}{The first factor  of the v matrix of the SVD of
     x'z. This is saved in case this function (or the CCA function) will be re-run later.}
 }

@@ -9,7 +9,8 @@ be sparse, and v can optionally also be smooth.
 \usage{
 PMD(x, type=c("standard", "ordered"), sumabs=.4, sumabsu=5,
 sumabsv=NULL, lambda=NULL, niter=20, K=1, v=NULL, trace=TRUE,
-center=TRUE, chrom=NULL, rnames=NULL, cnames=NULL)
+center=TRUE, chrom=NULL, rnames=NULL, cnames=NULL, upos=FALSE,
+uneg=FALSE, vpos=FALSE, vneg=FALSE)
 }
 \arguments{
   \item{x}{Data matrix of dimension $n x p$, which can contain NA
@@ -59,7 +60,16 @@ center=TRUE, chrom=NULL, rnames=NULL, cnames=NULL)
     should equal number of columns of x, and each entry in chrom should
     be a number corresponding to which chromosome the CGH spot is on.}
   \item{rnames}{An optional vector containing a name for each row of x.}
-  \item{cnames}{An optional vector containing a name for each column of x.}
+  \item{cnames}{An optional vector containing a name for each column of
+    x.}
+  \item{upos}{Constrain the elements of u to be positive? TRUE or
+    FALSE.}
+  \item{uneg}{Constrain the elements of u to be negative? TRUE or
+    FALSE.}
+  \item{vpos}{Constrain the elements of v to be positive? TRUE or
+    FALSE. Cannot be used if type is "ordered".}
+   \item{vneg}{Constrain the elements of v to be negative? TRUE or
+     FALSE. Cannot be used if type is "ordered."}
 }
 \details{
   The criterion for the PMD is as follows: we seek vectors $u$ and $v$

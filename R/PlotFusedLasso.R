@@ -3,7 +3,7 @@ PlotCGH <- function(array,chrom=NULL,nuc=NULL,main="", scaleEachChrom=TRUE){
     chrom <- rep(1,length(array))
     warning("Since chrom was not entered, PlotCGH assumed that all CGH spots in array are on the same chromosome.")
   }
-  if(!is.numeric(chrom)) stop("Chrom must be numeric.")
+#  if(!is.numeric(chrom)) stop("Chrom must be numeric.")
   if(is.null(nuc)){
     nuc <- rep(NA, length(chrom))
     for(i in unique(chrom)){
@@ -12,7 +12,7 @@ PlotCGH <- function(array,chrom=NULL,nuc=NULL,main="", scaleEachChrom=TRUE){
   }
   scaledarray <- numeric(length(array))
   if(scaleEachChrom){
-    for(i in sort(unique(chrom))) scaledarray[chrom==i] <- array[chrom==i]/(1.1*max(abs(array[chrom==i])))
+    for(i in (unique(chrom))) scaledarray[chrom==i] <- array[chrom==i]/(1.1*max(abs(array[chrom==i])))
   } else {
     scaledarray <- array/(.9*max(abs(array)))
   }
@@ -23,7 +23,7 @@ plot.CGH.FL.Single<-function(array, chr, nucposi, main=""){
   if(length(array)!=length(chr) || length(array)!=length(nucposi)) stop("Array, chrom, and nuc must all have the same length (or chrom & nuc can be NULL).")
   plot(0,0,type="n",axes=F,ylim=c(0,length(unique(chr))+1),xlim=c(-.05*max(nucposi), max(nucposi)),ylab="",xlab="",main=main,cex.main=1)
   for(j in 1:length((unique(chr)))){
-    chrj <- sort(unique(chr))[j]
+    chrj <- (unique(chr))[j]
     jp=length((unique(chr)))-j+1
     nuc=nucposi[chr==chrj]
     y=array[chr==chrj]

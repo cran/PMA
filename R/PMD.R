@@ -31,7 +31,7 @@ BinarySearch <- function(argu,sumabs){
 
 
 
-SMD <- function(x, sumabsu, sumabsv, niter=20,trace=TRUE, v){
+SMD <- function(x, sumabsu, sumabsv, niter=20,trace=TRUE, v, upos, uneg, vpos, vneg){
   # This gets a single factor. Do MultiSMD to get multiple factors.
   nas <- is.na(x)
   v.init <- v
@@ -44,12 +44,16 @@ SMD <- function(x, sumabsu, sumabsv, niter=20,trace=TRUE, v){
       if(trace) cat(iter,fill=F)
       # update u #
       argu <- xoo%*%v
+      if(upos) argu <- pmax(argu,0)
+      if(uneg) argu <- pmin(argu,0)
       lamu <- BinarySearch(argu,sumabsu)
       su <- soft(argu,lamu)
       u <- matrix(su/l2n(su),ncol=1)
       # done updating u #
       # update v #
       argv <- t(u)%*%xoo
+      if(vpos) argv <- pmax(argv,0)
+      if(vneg) argv <- pmin(argv,0)
       lamv <- BinarySearch(argv, sumabsv)
       sv <- soft(argv,lamv)
       v <- matrix(sv/l2n(sv),ncol=1)
@@ -61,7 +65,7 @@ SMD <- function(x, sumabsu, sumabsv, niter=20,trace=TRUE, v){
   return(list(d=d, u=u, v=v, v.init=v.init))
 }
 
-SMDOrth <- function(x, us, sumabsv=NULL, niter=20, trace=TRUE,v){
+SMDOrth <- function(x, us, sumabsv=NULL, niter=20, trace=TRUE,v, vpos, vneg){
   # Gets the next u for sparse PCA, using Trevor's method of requiring this new u to be orthog
   # to all previous us (contained in us)
   nas <- is.na(x)
@@ -83,6 +87,8 @@ SMDOrth <- function(x, us, sumabsv=NULL, niter=20, trace=TRUE,v){
       # done updating u #
       # update v #
       argv <- t(u)%*%xoo
+      if(vpos) argv <- pmax(argv,0)
+      if(vneg) argv <- pmin(argv,0)
       lamv <- BinarySearch(argv, sumabsv)
       sv <- soft(argv,lamv)
       v <- matrix(sv/l2n(sv),ncol=1)
@@ -109,8 +115,9 @@ CheckPMDV <-  function(v,x,K){
   return(v)
 }
 
-SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, center=TRUE, cnames=NULL){
-  out <- PMDL1L1(x,sumabsu=sqrt(nrow(x)), sumabsv=sumabsv, niter=niter,K=K,orth=orth,trace=trace,v=v,center=center,cnames=cnames)
+SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE){
+  if(vpos&&vneg) stop("Cannot constrain elements to be positive AND negative.")
+  out <- PMDL1L1(x,sumabsu=sqrt(nrow(x)), sumabsv=sumabsv, niter=niter,K=K,orth=orth,trace=trace,v=v,center=center,cnames=cnames, upos=FALSE, uneg=FALSE, vpos=vpos, vneg=vneg)
   # Calculate percent variance explained, using definition on page 7 of Shen and Huang (2008) Journal of Multivariate Analysis vol 99: 1015-1034
   v <- matrix(out$v, ncol=K)
   ve <- NULL # variance explained
@@ -125,6 +132,8 @@ SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, cen
   }
   pve <- ve/sum(svd(xfill)$d^2) # proportion of variance explained
   out$prop.var.explained <- pve
+  out$vpos <- vpos
+  out$vneg <- vneg
   class(out) <- "spc"
   return(out)
 }
@@ -151,39 +160,53 @@ print.spc <- function(x,verbose=FALSE,...){
       print(vs, quote=FALSE, sep="\t")
     }
   }
+  if(x$vpos) cat("Elements of v constrained to be positive.", fill=TRUE)
+  if(x$vneg) cat("Elements of v constrained to be negative.", fill=TRUE)
 }
 
-PMD <- function(x, type=c("standard", "ordered"), sumabs=.4, sumabsu=5, sumabsv=NULL, lambda=NULL, niter=20, K=1, v=NULL, trace=TRUE, center=TRUE, chrom=NULL, rnames=NULL, cnames=NULL){
+PMD <- function(x, type=c("standard", "ordered"), sumabs=.4, sumabsu=5, sumabsv=NULL, lambda=NULL, niter=20, K=1, v=NULL, trace=TRUE, center=TRUE, chrom=NULL, rnames=NULL, cnames=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE){
+  if(upos&&uneg || vpos&&vneg) stop("Cannot contrain elements to be both positive and negative!")
+  if(type=="ordered" && (vpos||vneg)) stop("Cannot constrain signs of v if type is ordered.")
   call <- match.call()
   type <- match.arg(type)
   if(type=="standard"){
-    out <- PMDL1L1(x, sumabs=sumabs, sumabsu=sumabsu, sumabsv=sumabsv, niter=niter, K=K, v=v, trace=trace, center=center, rnames=rnames, cnames=cnames)
+    out <- PMDL1L1(x, sumabs=sumabs, sumabsu=sumabsu, sumabsv=sumabsv, niter=niter, K=K, v=v, trace=trace, center=center, rnames=rnames, cnames=cnames, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
     class(out) <- "pmdl1l1"
   } else if(type=="ordered"){
-    out <- PMDL1FL(x,K=K,sumabsu=sumabsu,lambda=lambda,chrom=chrom,niter=niter, v=v, trace=trace, center=center, rnames=rnames, cnames=cnames)
+    out <- PMDL1FL(x,K=K,sumabsu=sumabsu,lambda=lambda,chrom=chrom,niter=niter, v=v, trace=trace, center=center, rnames=rnames, cnames=cnames, upos=upos, uneg=uneg)
     class(out) <- "pmdl1fl"
   }
+  out$upos <- upos
+  out$uneg <- uneg
+  out$vpos <- vpos
+  out$vneg <- vneg
   out$call <- call
   return(out)
 }
 
-PMD.cv <- function(x, type=c("standard", "ordered"), sumabss=seq(0.1,0.7,len=10), sumabsus=NULL, lambda=NULL, nfolds=5, niter=5, v=NULL, chrom=NULL, nuc=NULL, trace=TRUE, center=TRUE){
+PMD.cv <- function(x, type=c("standard", "ordered"), sumabss=seq(0.1,0.7,len=10), sumabsus=NULL, lambda=NULL, nfolds=5, niter=5, v=NULL, chrom=NULL, nuc=NULL, trace=TRUE, center=TRUE, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE){
+  if(upos&&uneg || vpos&&vneg) stop("Cannot contrain elements to be both positive and negative!")
+  if(type=="ordered" && (vpos||vneg)) stop("Cannot constrain signs of v if type is ordered.")
   call <- match.call()
-  type <- match.arg(type)
+  type <- match.arg(type) 
   if(type=="standard"){
-    out <- PMDL1L1.cv(x, sumabss=sumabss, nfolds=nfolds, niter=niter, v=v, trace=trace, center=center)
+    out <- PMDL1L1.cv(x, sumabss=sumabss, nfolds=nfolds, niter=niter, v=v, trace=trace, center=center, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
     class(out) <- "pmdl1l1cv"
   } else if(type=="ordered"){
-    out <- PMDL1FL.cv(x, nfolds=nfolds, niter=niter, lambda=lambda, sumabsus=sumabsus, chrom=chrom, v=v, trace=trace, nuc=nuc, center=center)
+    out <- PMDL1FL.cv(x, nfolds=nfolds, niter=niter, lambda=lambda, sumabsus=sumabsus, chrom=chrom, v=v, trace=trace, nuc=nuc, center=center, upos=upos, uneg=uneg)
     class(out) <- "pmdl1flcv"
   }
+  out$upos <- upos
+  out$uneg <- uneg
+  out$vpos <- vpos
+  out$vneg <- vneg
   out$call <- call
   return(out)
 }
 
 
 
-PMDL1L1 <- function(x,sumabs=.4,sumabsu=NULL,sumabsv=NULL,niter=20,K=1,v=NULL, trace=TRUE, orth=FALSE, center=TRUE, rnames=NULL, cnames=NULL){
+PMDL1L1 <- function(x,sumabs=.4,sumabsu=NULL,sumabsv=NULL,niter=20,K=1,v=NULL, trace=TRUE, orth=FALSE, center=TRUE, rnames=NULL, cnames=NULL, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg){
   if(center){
     meanx <- mean.na(x)
     x <- x-meanx
@@ -206,10 +229,10 @@ PMDL1L1 <- function(x,sumabs=.4,sumabsu=NULL,sumabsv=NULL,niter=20,K=1,v=NULL, t
   if(!is.null(sumabsu) && (sumabsu<1 || sumabsu>sqrt(nrow(x)))) stop("sumabsu must be between 1 and sqrt(n)")
   if(!is.null(sumabsv) && (sumabsv<1 || sumabsv>sqrt(ncol(x)))) stop("sumabsv must be between 1 and sqrt(p)")
   v <- CheckPMDV(v,x,K)
-  if(K>1 && !orth) out <- (MultiSMD(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,K=K, trace=trace, v=v))
-  if(K>1 && orth) out <- MultiSMDOrth(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,K=K, trace=trace, v=v)
-  if(K==1) out <- SMD(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter, trace=trace, v=v)
-  obj <- (list(u=out$u,v=out$v, d=out$d, v.init=out$v.init, call=call, meanx=meanx,sumabsu=sumabsu, sumabsv=sumabsv, rnames=rnames, cnames=cnames, K=K))
+  if(K>1 && !orth) out <- (MultiSMD(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,K=K, trace=trace, v=v, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg))
+  if(K>1 && orth) out <- MultiSMDOrth(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,K=K, trace=trace, v=v,  vpos=vpos, vneg=vneg)
+  if(K==1) out <- SMD(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter, trace=trace, v=v, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
+  obj <- (list(u=out$u,v=out$v, d=out$d, v.init=out$v.init, call=call, meanx=meanx,sumabsu=sumabsu, sumabsv=sumabsv, rnames=rnames, cnames=cnames, K=K, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg))
   class(obj) <- "pmdl1l1"
   return(obj)
 }
@@ -240,6 +263,10 @@ print.pmdl1l1 <- function(x,verbose=FALSE,...){
       print(vs, quote=FALSE, sep="\t")
     }
   }
+  if(x$upos) cat("Elements of u constrained to be positive.", fill=TRUE)
+  if(x$vpos) cat("Elements of v constrained to be positive.", fill=TRUE)
+  if(x$uneg) cat("Elements of u constrained to be negative.", fill=TRUE)
+  if(x$vneg) cat("Elements of v constrained to be negative.", fill=TRUE)
 }
 
 print.pmdl1fl <- function(x,verbose=FALSE,...){
@@ -268,12 +295,14 @@ print.pmdl1fl <- function(x,verbose=FALSE,...){
       print(vs, quote=FALSE, sep="\t")
     }
   }
+  if(x$upos) cat("Elements of u constrained to be positive.", fill=TRUE)
+  if(x$uneg) cat("Elements of u constrained to be negative.", fill=TRUE)
 }
  
-MultiSMDOrth <- function(x,sumabsu,sumabsv,niter,K, trace, v){
+MultiSMDOrth <- function(x,sumabsu,sumabsv,niter,K, trace, v, vpos, vneg){
   if(sumabsu < sqrt(nrow(x))){
     warning("sumabsu was less than sqrt(nrow(x)), so the orthogonal option was not implemented.")
-    return(MultiSMD(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,K=K, trace=trace, v=v))
+    return(MultiSMD(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,K=K, trace=trace, v=v, vpos=vpos, vneg=vneg))
   }
   nas <- is.na(x)
   v.init <- v
@@ -282,8 +311,8 @@ MultiSMDOrth <- function(x,sumabsu,sumabsv,niter,K, trace, v){
   us <- matrix(0,nrow=nrow(x),ncol=K)
   vs <- matrix(0,nrow=ncol(x),ncol=K)
   for(k in 1:K){
-    if(k==1) out <- SMD(xuse,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,v=matrix(v[,k],ncol=1), trace=trace)
-    if(k>1) out <- SMDOrth(xuse,us[,1:(k-1)],sumabsv=sumabsv,niter=niter,v=matrix(v[,k],ncol=1), trace=trace)
+    if(k==1) out <- SMD(xuse,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,v=matrix(v[,k],ncol=1), trace=trace, upos=FALSE, uneg=FALSE,  vpos=vpos, vneg=vneg)
+    if(k>1) out <- SMDOrth(xuse,us[,1:(k-1)],sumabsv=sumabsv,niter=niter,v=matrix(v[,k],ncol=1), trace=trace,  vpos=vpos, vneg=vneg)
     us[,k] <- out$u 
     vs[,k] <- out$v 
     ds[k] <- out$d
@@ -291,7 +320,7 @@ MultiSMDOrth <- function(x,sumabsu,sumabsv,niter,K, trace, v){
   return(list(u=us,v=vs,d=ds, v.init=v.init))
 }
 
-MultiSMD <- function(x, sumabsu, sumabsv, K=3, niter=20,v, trace=TRUE){
+MultiSMD <- function(x, sumabsu, sumabsv, K=3, niter=20,v, trace=TRUE, upos, uneg, vpos, vneg){
   nas <- is.na(x)
   v.init <- v
   xuse <- x
@@ -299,17 +328,17 @@ MultiSMD <- function(x, sumabsu, sumabsv, K=3, niter=20,v, trace=TRUE){
   us <- matrix(0,nrow=nrow(x),ncol=K)
   vs <- matrix(0,nrow=ncol(x),ncol=K)
   for(k in 1:K){
-    out <- SMD(xuse, sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,v=matrix(v[,k],ncol=1), trace=trace)
+    out <- SMD(xuse, sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,v=matrix(v[,k],ncol=1), trace=trace, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
     us[,k] <- out$u 
     vs[,k] <- out$v 
     ds[k] <- out$d
     res <- xuse - out$d*out$u%*%t(out$v) 
-    xuse[!nas] <- res
+    xuse[!nas] <- res[!nas] # [!nas] is new on July 24 2009
   }
   return(list(u=us,v=vs,d=ds, v.init=v.init))
 }
 
-PMDL1L1.cv <- function(x, sumabss=seq(0.1,0.7,len=10), nfolds=5, niter=5, v=NULL, trace=TRUE, center=TRUE){
+PMDL1L1.cv <- function(x, sumabss=seq(0.1,0.7,len=10), nfolds=5, niter=5, v=NULL, trace=TRUE, center=TRUE, upos, uneg, vpos, vneg){
   if(nfolds<2) stop("Must run at least 2 cross-validation folds.")
   percentRemove <- min(.25, 1/nfolds)
   call <- match.call()
@@ -329,7 +358,7 @@ PMDL1L1.cv <- function(x, sumabss=seq(0.1,0.7,len=10), nfolds=5, niter=5, v=NULL
     xrm <- x
     xrm[rm] <- NA 
     for(j in 1:length(sumabss)){
-      out <- PMDL1L1(xrm, sumabs=sumabss[j], niter=niter, v=v, trace=FALSE, center=center,K=1)
+      out <- PMDL1L1(xrm, sumabs=sumabss[j], niter=niter, v=v, trace=FALSE, center=center,K=1, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
       xhat <- as.numeric(out$d)*out$u%*%t(out$v)
       errs[i,j] <- sum(((xhat-x)[rm & !missing])^2)
       nonzerous[i,j] <- sum(out$u!=0)
@@ -347,7 +376,8 @@ PMDL1L1.cv <- function(x, sumabss=seq(0.1,0.7,len=10), nfolds=5, niter=5, v=NULL
   return(object) 
 }
 
-SPC.cv <- function(x, sumabsvs=seq(1.2,5,len=10), nfolds=5, niter=5, v=NULL, trace=TRUE, orth=FALSE,  center=TRUE){
+SPC.cv <- function(x, sumabsvs=seq(1.2,5,len=10), nfolds=5, niter=5, v=NULL, trace=TRUE, orth=FALSE,  center=TRUE, vpos=FALSE, vneg=FALSE){
+  if(vpos&&vneg) stop("Cannot constrain elements of v to be both positive and negative.")
   if(nfolds<2) stop("Must run at least 2 cross-validation folds.")
   percentRemove <- min(.25, 1/nfolds)
   call <- match.call()
@@ -364,7 +394,7 @@ SPC.cv <- function(x, sumabsvs=seq(1.2,5,len=10), nfolds=5, niter=5, v=NULL, tra
     xrm <- x
     xrm[rm] <- NA 
     for(j in 1:length(sumabsvs)){
-      out <- SPC(xrm, sumabsv=sumabsvs[j], orth=orth, niter=niter, v=v, trace=FALSE, center=center,K=1)
+      out <- SPC(xrm, sumabsv=sumabsvs[j], orth=orth, niter=niter, v=v, trace=FALSE, center=center,K=1, vpos=vpos, vneg=vneg)
       xhat <- as.numeric(out$d)*out$u%*%t(out$v)
       errs[i,j] <- sum(((xhat-x)[rm & !missing])^2)
       nonzerovs[i,j] <- sum(out$v!=0)
@@ -376,7 +406,7 @@ SPC.cv <- function(x, sumabsvs=seq(1.2,5,len=10), nfolds=5, niter=5, v=NULL, tra
   nonzerovs.mean <- apply(nonzerovs,2,mean)
   bestsumabsv <- sumabsvs[which.min(err.means)]
   bestsumabsv1se <- sumabsvs[min(which(err.means < min(err.means) + err.sds[which.min(err.means)]))]
-  object <- (list(cv=err.means, cv.error=err.sds,bestsumabsv=bestsumabsv,nonzerovs=nonzerovs.mean, v.init=v, call=call, sumabsvs=sumabsvs, nfolds=nfolds, bestsumabsv1se=bestsumabsv1se))
+  object <- (list(cv=err.means, cv.error=err.sds,bestsumabsv=bestsumabsv,nonzerovs=nonzerovs.mean, v.init=v, call=call, sumabsvs=sumabsvs, nfolds=nfolds, bestsumabsv1se=bestsumabsv1se, vpos=vpos, vneg=vneg))
   class(object) <- "spccv"
   return(object) 
 }
@@ -403,6 +433,8 @@ print.spccv <- function(x,...){
   print(mat, quote=F)
   cat('\n Best sumabsv value (lowest CV error): ', x$bestsumabsv, "\n")
   cat('\n Smallest sumabsv value that has CV error within 1 SE of best CV error: ', x$bestsumabsv1se, "\n")
+  if(x$vpos) cat("Elements of v constrained to be positive.", fill=TRUE)
+  if(x$vneg) cat("Elements of v constrained to be negative.", fill=TRUE)
 }
 
 print.pmdl1l1cv <- function(x,...){
@@ -414,6 +446,10 @@ print.pmdl1l1cv <- function(x,...){
   dimnames(mat) <- list(1:length(x$sumabss), c("Sumabss", "CV Error", "CV S.E.", "# non-zero u's", "# non-zero v's"))
   print(mat, quote=F)
   cat('\n Best sumabs value (lowest CV error): ', x$bestsumabs, "\n")
+  if(x$upos) cat("Elements of u constrained to be positive.", fill=TRUE)
+  if(x$uneg) cat("Elements of u constrained to be negative.", fill=TRUE)
+  if(x$vpos) cat("Elements of v constrained to be positive.", fill=TRUE)
+  if(x$vneg) cat("Elements of v constrained to be negative.", fill=TRUE)
 }
 
 plot.pmdl1l1cv <- function(x,...){
@@ -427,7 +463,7 @@ plot.pmdl1l1cv <- function(x,...){
 }
 
 
-PMDL1FL.cv <- function(x, nfolds=5, niter=5, lambda=NULL, sumabsus=NULL, chrom=NULL, v=NULL, trace=TRUE, nuc=NULL, center=TRUE){
+PMDL1FL.cv <- function(x, nfolds=5, niter=5, lambda=NULL, sumabsus=NULL, chrom=NULL, v=NULL, trace=TRUE, nuc=NULL, center=TRUE, upos, uneg){
   if(is.null(sumabsus)) sumabsus <- seq(1, .7*sqrt(nrow(x)),len=10)
   percentRemove <- min(.25, 1/nfolds)
   call <- match.call()
@@ -446,7 +482,7 @@ PMDL1FL.cv <- function(x, nfolds=5, niter=5, lambda=NULL, sumabsus=NULL, chrom=N
     xrm[rm] <- NA
     for(j in 1:length(sumabsus)){
       if(trace) cat(j,fill=F)
-      out <- PMDL1FL(xrm, K=1, lambda=lambda,sumabsu=sumabsus[j], niter=niter, chrom=chrom, v=v, trace=FALSE, center=center)
+      out <- PMDL1FL(xrm, K=1, lambda=lambda,sumabsu=sumabsus[j], niter=niter, chrom=chrom, v=v, trace=FALSE, center=center, upos=upos, uneg=uneg)
       xhat <- as.numeric(out$d)*out$u%*%t(out$v)
       errs[i,j] <- sum(((xhat-x)[rm & !missing])^2)
       nonzerous[i,j] <- sum(out$u!=0)
@@ -481,7 +517,7 @@ plot.pmdl1flcv <- function(x,...){
   points(sumabsus, err.means)
   lines(sumabsus, err.means+err.sds, lty="dashed")
   lines(sumabsus, err.means-err.sds, lty="dashed")
-  out <- PMDL1FL(mat, sumabsu=bestsumabsu,  K=1, chrom=chrom, niter=niter, v=v, trace=FALSE, lambda=lambda)
+  out <- PMDL1FL(mat, sumabsu=bestsumabsu,  K=1, chrom=chrom, niter=niter, v=v, trace=FALSE, lambda=lambda, upos=x$upos, uneg=x$uneg)
   PlotCGH(out$v, main="Best V", chrom=chrom, nuc=nuc)
 }
 
@@ -495,4 +531,6 @@ print.pmdl1flcv <- function(x,...){
   print(mat, quote=F)
   cat('\n Best sumabs value : ', x$bestsumabsu, "\n")
   cat('\n Lambda Used : ', x$lambda, "\n")
+  if(x$upos) cat("Elements of u constrained to be positive.", fill=TRUE)
+  if(x$uneg) cat("Elements of u constrained to be negative.", fill=TRUE)
 }

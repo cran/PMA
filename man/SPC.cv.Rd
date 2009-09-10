@@ -11,7 +11,7 @@ $L_1$ norm - of the elements of the sparse principal component.
 }
 \usage{
 SPC.cv(x, sumabsvs=seq(1.2, 5,len=10), nfolds=5, niter=5, v=NULL,
-trace=TRUE, orth=FALSE, center=TRUE)
+trace=TRUE, orth=FALSE, center=TRUE, vpos=FALSE, vneg=FALSE)
 }
 \arguments{
   \item{x}{Data matrix of dimension $n x p$, which can contain NA
@@ -37,6 +37,8 @@ trace=TRUE, orth=FALSE, center=TRUE)
     use method of Section 3.2 of Witten, Tibshirani and Hastie (2008) to
     obtain multiple sparse principal components. Default is FALSE.}
   \item{center}{Subtract out mean of x? Default is TRUE}
+  \item{vpos}{Constrain elements of v to be positive? Default is FALSE.}
+  \item{vneg}{Constrain elements of v to be negative? Default is FALSE.}
 }
 \details{
 This method only performs cross-validation for  the first sparse
@@ -86,7 +88,7 @@ x <- u\%*\%t(v)+matrix(rnorm(200*300),ncol=300)
 # and w/ L1 penalty on columns
 # First, we perform sparse PCA and get 4 components, but we do not
 # require subsequent components to be orthogonal to previous components
-cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=20))
+cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=6))
 print(cv.out)
 plot(cv.out)
 out <- SPC(x,sumabsv=cv.out$bestsumabs, K=4) # could use
@@ -94,7 +96,7 @@ out <- SPC(x,sumabsv=cv.out$bestsumabs, K=4) # could use
 print(out,verbose=TRUE)
 # Now, we do sparse PCA using method in Section 3.2 of WT&H(2008) for getting
 # multiple components - that is, we require components to be orthogonal
-cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=20), orth=TRUE)
+cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=6), orth=TRUE)
 print(cv.out)
 plot(cv.out)
 out.orth <- SPC(x,sumabsv=cv.out$bestsumabsv, K=4, orth=TRUE)

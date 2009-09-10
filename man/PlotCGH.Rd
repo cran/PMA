@@ -11,8 +11,7 @@ PlotCGH(array,chrom=NULL,nuc=NULL,main="",scaleEachChrom=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
- \item{array}{A vector containing a numeric value (corresponding to
-   gain/loss) for each CGH spot.}
+ \item{array}{A vector containing the chromosomal location of each CGH spot.}
  \item{chrom}{A numeric vector of the same length as "array"; its values should
    indicate the
    chromosome that each CGH spot is on (for instance, for human genomic
