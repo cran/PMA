@@ -32,11 +32,11 @@ CCA <- function(x, z, typex=c("standard", "ordered"), typez=c("standard","ordere
   v <- CheckVs(v,x,z,K)
   if(is.null(penaltyx)){
     if(typex=="standard") penaltyx <- .3#pmax(1.001,.3*sqrt(ncol(x)))/sqrt(ncol(x))
-    if(typex=="ordered")  penaltyx <- ChooseLambda1Lambda2(as.numeric(CheckVs(v[,1],z,x,1))) # v[,1] used to be NULL 
+    if(typex=="ordered")  penaltyx <- ChooseLambda1Lambda2(as.numeric(CheckVs(NULL,z,x,1))) # v[,1] used to be NULL 
   }
   if(is.null(penaltyz)){
     if(typez=="standard") penaltyz <- .3#pmax(1.001,.3*sqrt(ncol(z)))/sqrt(ncol(z))
-    if(typez=="ordered")  penaltyz <-  ChooseLambda1Lambda2(as.numeric(CheckVs(v[,1],z,x,1))) # ChooseLambda1Lambda2(as.numeric(v[,1]))
+    if(typez=="ordered")  penaltyz <-  ChooseLambda1Lambda2(as.numeric(CheckVs(NULL,x,z,1))) # ChooseLambda1Lambda2(as.numeric(v[,1]))
   }
   if(!is.null(penaltyx)){
     if(typex=="standard" && (penaltyx<0 || penaltyx>1)) stop("Penaltyx must be between 0 and 1 when typex is standard.")
@@ -152,13 +152,25 @@ fastsvd <- function(x,z){
   xx=x%*%t(x)
   xx2=msqrt(xx)
   y=t(z)%*%xx2
-  a=svd(y)
+  a=try(svd(y), silent=TRUE)
+  iter <- 1
+  if(class(a)=="try-error" && iter<10){
+    a=try(svd(y), silent=TRUE)
+    iter <- iter+1
+  }
+  if(iter==10) stop("too many tries.")
   v=a$u
   d=a$d
   zz=z%*%t(z)
   zz2=msqrt(zz)
   y=t(x)%*%zz2
-  a=svd(y)
+  a=try(svd(y), silent=TRUE)
+  iter <- 1
+  if(class(a)=="try-error" && iter<10){
+    a=try(svd(y), silent=TRUE)
+    iter <- iter+1
+  }
+  if(iter==10) stop("too many tries.")
   u=a$u
   return(list(u=u,v=v,d=d))
 }
@@ -263,9 +275,21 @@ CheckVs <- function(v,x,z,K){ # If v is NULL, then get v as appropriate.
   if(!is.null(v) && ncol(v)<K) v <- NULL
   if(!is.null(v) && ncol(v)>K) v <- matrix(v[,1:K],ncol=K)
   if(is.null(v) && ncol(z)>nrow(z) && ncol(x)>nrow(x)){
-    v <- matrix(fastsvd(x,z)$v[,1:K],ncol=K)
+    v <- try(matrix(fastsvd(x,z)$v[,1:K],ncol=K), silent=TRUE)
+    attempt <- 1
+    while(class(v)=="try-error" && attempt < 10){
+      v <- try(matrix(fastsvd(x,z)$v[,1:K],ncol=K), silent=TRUE)
+      attempt <- attempt+1
+    }
+    if(attempt==10) stop("Problem computing SVD.")
   } else if (is.null(v) && (ncol(z)<=nrow(z) || ncol(x)<=nrow(x))){
-    v <- matrix(svd(t(x)%*%z)$v[,1:K],ncol=K)
+    attempt <- 1
+    v <- try(matrix(svd(t(x)%*%z)$v[,1:K],ncol=K), silent=TRUE)    
+    while(class(v)=="try-error" && attempt<10){
+      v <- try(matrix(svd(t(x)%*%z)$v[,1:K],ncol=K), silent=TRUE)
+      attempt <- attempt+1
+    }
+    if(attempt==10) stop("Problem computing SVD.")
   }
   return(v)
 }
