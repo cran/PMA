@@ -7,7 +7,7 @@ matrix with lasso ($L_1$) penalty on the columns and no penalty on the rows.
 }
 \usage{
 SPC(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL,
-center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE)
+center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE, compute.pve=TRUE)
 }
 \arguments{
   \item{x}{Data matrix of dimension $n x p$, which can contain NA
@@ -36,7 +36,10 @@ center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE)
   \item{cnames}{An optional vector containing a name for each column.}
   \item{vpos}{Constrain the elements of v to be positive? TRUE or
     FALSE.}
-  \item{vneg}{Constrain the elements of v to be negative? TRUE or FALSE.}
+  \item{vneg}{Constrain the elements of v to be negative? TRUE or
+    FALSE.}
+  \item{compute.pve}{Compute percent variance explained? Default
+    TRUE. If not needed, then choose FALSE to save time.}
 }
 \details{
 PMD(x,sumabsu=sqrt(nrow(x)), sumabsv=3, K=1) and SPC(x,sumabsv=3, K=1) give the

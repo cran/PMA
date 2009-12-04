@@ -7,7 +7,20 @@ mean.na <- function(vec){
 }
 
 l2n <- function(vec){
-  return(sqrt(sum(vec^2)))
+  a <- sqrt(sum(vec^2))
+  if(a==0) a <- .05
+  return(a)
+}
+
+safesvd <- function(x){
+  i <- 1
+  out <- try(svd(x), silent=TRUE)
+  while(i<10 && class(out)=="try-error"){
+    out <- try(svd(x), silent=TRUE)
+    i <- i+1
+  }
+  if(class(out)=="try-error") out <- svd(matrix(rnorm(nrow(x)*ncol(x)), ncol=ncol(x)))
+  return(out)
 }
 
 BinarySearch <- function(argu,sumabs){
@@ -106,32 +119,36 @@ CheckPMDV <-  function(v,x,K){
     v <- matrix(v[,1:K], ncol=K)
   } else if(ncol(x)>nrow(x)){
     x[is.na(x)] <- mean.na(x)
-    v <- matrix(t(x)%*%(svd(x%*%t(x))$v[,1:K]),ncol=K)
+    v <- matrix(t(x)%*%(safesvd(x%*%t(x))$v[,1:K]),ncol=K)
+    if(sum(is.na(v))>0) v <- matrix(safesvd(x)$v[,1:K], ncol=K)
     v <- sweep(v,2,apply(v, 2, l2n), "/")
+    if(sum(is.na(v))>0) stop("some are NA")
   } else if (ncol(x)<=nrow(x)){
     x[is.na(x)] <- mean.na(x)
-    v <- matrix(svd(t(x)%*%x)$v[,1:K],ncol=K)
+    v <- matrix(safesvd(t(x)%*%x)$v[,1:K],ncol=K)
   }
   return(v)
 }
 
-SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE){
+SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE, compute.pve=TRUE){
   if(vpos&&vneg) stop("Cannot constrain elements to be positive AND negative.")
   out <- PMDL1L1(x,sumabsu=sqrt(nrow(x)), sumabsv=sumabsv, niter=niter,K=K,orth=orth,trace=trace,v=v,center=center,cnames=cnames, upos=FALSE, uneg=FALSE, vpos=vpos, vneg=vneg)
-  # Calculate percent variance explained, using definition on page 7 of Shen and Huang (2008) Journal of Multivariate Analysis vol 99: 1015-1034
-  v <- matrix(out$v, ncol=K)
-  ve <- NULL # variance explained
-  xfill <- x
-  if(center) xfill <- x-mean.na(x)
-  xfill[is.na(x)] <- mean.na(xfill)
-  for(k in 1:K){
-    vk <- matrix(v[,1:k], ncol=k)
-    xk <- xfill%*%vk%*%solve(t(vk)%*%vk)%*%t(vk)
-    svdxk <- svd(xk)
-    ve <- c(ve, sum(svdxk$d^2))
+  if(compute.pve){
+     # Calculate percent variance explained, using definition on page 7 of Shen and Huang (2008) Journal of Multivariate Analysis vol 99: 1015-1034
+    v <- matrix(out$v, ncol=K)
+    ve <- NULL # variance explained
+    xfill <- x
+    if(center) xfill <- x-mean.na(x)
+    xfill[is.na(x)] <- mean.na(xfill)
+    for(k in 1:K){
+      vk <- matrix(v[,1:k], ncol=k)
+      xk <- xfill%*%vk%*%solve(t(vk)%*%vk)%*%t(vk)
+      svdxk <- svd(xk)
+      ve <- c(ve, sum(svdxk$d^2))    
+    }
+    pve <- ve/sum(svd(xfill)$d^2) # proportion of variance explained
+    out$prop.var.explained <- pve
   }
-  pve <- ve/sum(svd(xfill)$d^2) # proportion of variance explained
-  out$prop.var.explained <- pve
   out$vpos <- vpos
   out$vneg <- vneg
   class(out) <- "spc"
@@ -139,7 +156,7 @@ SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, cen
 }
 
 print.spc <- function(x,verbose=FALSE,...){
-    cat("Call: ")
+  cat("Call: ")
   dput(x$call)
   cat("\n\n")
   cat("Num non-zero v's: ", apply(x$v!=0, 2, sum), "\n")
@@ -225,7 +242,7 @@ PMDL1L1 <- function(x,sumabs=.4,sumabsu=NULL,sumabsv=NULL,niter=20,K=1,v=NULL, t
     sumabsv <- sqrt(ncol(x))*sumabs
   }
   call <-  match.call()
-  if(abs(mean.na(x)) > 1e-15) warning("PMDL1L1 was run without first subtracting out the mean of x.")
+  if(trace && abs(mean.na(x)) > 1e-15) warning("PMDL1L1 was run without first subtracting out the mean of x.")
   if(!is.null(sumabsu) && (sumabsu<1 || sumabsu>sqrt(nrow(x)))) stop("sumabsu must be between 1 and sqrt(n)")
   if(!is.null(sumabsv) && (sumabsv<1 || sumabsv>sqrt(ncol(x)))) stop("sumabsv must be between 1 and sqrt(p)")
   v <- CheckPMDV(v,x,K)

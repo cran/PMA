@@ -1,8 +1,8 @@
 Package: PMA
 Type: Package
 Title: Penalized Multivariate Analysis
-Version: 1.0.4
-Date: 2009-09-10
+Version: 1.0.5
+Date: 2009-12-04
 Author: Daniela Witten and Rob Tibshirani and Sam Gross
 Maintainer: Daniela Witten <dwitten@stanford.edu>
 Description: Performs Penalized Multivariate Analysis: a penalized
@@ -17,6 +17,6 @@ Description: Performs Penalized Multivariate Analysis: a penalized
         Genetics and Molecular Biology 8(1): Article 28.
 License: GPL (>= 2)
 Depends: R (>= 1.9.0), plyr
-Packaged: 2009-10-23 17:15:01 UTC; dwitten
+Packaged: 2009-12-05 00:23:48 UTC; dwitten
 Repository: CRAN
-Date/Publication: 2009-10-23 17:21:37
+Date/Publication: 2009-12-06 10:08:08

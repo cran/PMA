@@ -321,7 +321,7 @@ CCA.permute.both <- function(x,z,typex,typez,penaltyxs,penaltyzs,niter,v,trace,n
     # 0.05 added to the denominator to avoid getting zstat of INFINITY
   if(trace) cat(fill=T)
   pvals <- apply(sweep(ccperms,1,ccs,"-")>=0,1,mean)
-  results <- list(zstats=zstats,penaltyxs=penaltyxs, penaltyzs=penaltyzs,bestpenaltyx=penaltyxs[which.max(zstats)], bestpenaltyz=penaltyzs[which.max(zstats)], cors=ccs, corperms=ccperms, ft.cors=cc.norm,ft.corperms=rowMeans(ccperm.norm),nnonzerous=nnonzerous,nnonzerovs=nnonzerovs, nnonzerous.perm=rowMeans(nnonzerous.perms),nnonzerovs.perm=rowMeans(nnonzerovs.perms),call=call,v.init=v,pvals=pvals,nperms=nperms,chromz=chromz,chromx=chromx,typex=typex,typez=typez)
+  results <- list(zstats=zstats,penaltyxs=penaltyxs, penaltyzs=penaltyzs,bestpenaltyx=penaltyxs[which.max(zstats)], bestpenaltyz=penaltyzs[which.max(zstats)], cors=ccs, corperms=ccperms, ft.cors=cc.norm,ft.corperms=rowMeans(ccperm.norm),nnonzerous=nnonzerous,nnonzerovs=nnonzerovs, nnonzerous.perm=rowMeans(nnonzerous.perms),nnonzerovs.perm=rowMeans(nnonzerovs.perms),call=call,v.init=v,pvals=pvals,nperms=nperms,chromz=chromz,chromx=chromx,typex=typex,typez=typez, pvalbestz=pvals[which.max(zstats)])
   return(results)
 }
 
@@ -411,7 +411,7 @@ CCA.permute.zonly<- function(x,z,typex,typez,penaltyx,penaltyzs,niter,v,trace,np
   zstats <- (cc.norm - rowMeans(ccperm.norm))/(apply(ccperm.norm,1,sd) + .05)
   if(trace) cat(fill=T)
   pvals <- apply(sweep(ccperms,1,ccs,"-")>=0,1,mean)
-  results <- list(zstats=zstats,typex=typex,typez=typez,penaltyxs=rep(penaltyx,length(penaltyzs)),penaltyzs=penaltyzs,bestpenaltyx=penaltyx,bestpenaltyz=penaltyzs[which.max(zstats)], cors=ccs, corperms=ccperms, ft.cors=cc.norm,ft.corperms=rowMeans(ccperm.norm),nnonzerous=nnonzerous,nnonzerovs=nnonzerovs, nnonzerous.perm=rowMeans(nnonzerous.perms),nnonzerovs.perm=rowMeans(nnonzerovs.perms),call=call,v.init=v, pvals=pvals,nperms=nperms,chromx=chromx,chromz=chromz,storevs=storevs, outcome=outcome)
+  results <- list(zstats=zstats,typex=typex,typez=typez,penaltyxs=rep(penaltyx,length(penaltyzs)),penaltyzs=penaltyzs,bestpenaltyx=penaltyx,bestpenaltyz=penaltyzs[which.max(zstats)], cors=ccs, corperms=ccperms, ft.cors=cc.norm,ft.corperms=rowMeans(ccperm.norm),nnonzerous=nnonzerous,nnonzerovs=nnonzerovs, nnonzerous.perm=rowMeans(nnonzerous.perms),nnonzerovs.perm=rowMeans(nnonzerovs.perms),call=call,v.init=v, pvals=pvals,nperms=nperms,chromx=chromx,chromz=chromz,storevs=storevs, outcome=outcome, pvalbestz=pvals[which.max(zstats)])
   return(results)
 }
 
@@ -458,7 +458,7 @@ CCA.permute.justone <- function(x,z,typex,typez,penaltyx,penaltyz,niter,v,trace,
   cc <- as.numeric(cc)
   ccperms <- as.numeric(ccperms)
   pval <- mean(ccperms>=cc)
-  results <- list(zstats=zstat,typex=typex,typez=typez,penaltyxs=penaltyx, penaltyzs=penaltyz,bestpenaltyx=penaltyx,bestpenaltyz=penaltyz, cors=cc, corperms=ccperms, ft.cors=cc.norm,ft.corperms=mean(ccperm.norms),nnonzerous=nnonzerou,nnonzerovs=nnonzerov, nnonzerous.perm=mean(nnonzerous.perms),nnonzerovs.perm=mean(nnonzerovs.perms),call=call,v.init=v, pvals=pval,nperms=nperms,chromx=chromx,chromz=chromz,storevs=storevs, outcome=outcome)
+  results <- list(zstats=zstat,typex=typex,typez=typez,penaltyxs=penaltyx, penaltyzs=penaltyz,bestpenaltyx=penaltyx,bestpenaltyz=penaltyz, cors=cc, corperms=ccperms, ft.cors=cc.norm,ft.corperms=mean(ccperm.norms),nnonzerous=nnonzerou,nnonzerovs=nnonzerov, nnonzerous.perm=mean(nnonzerous.perms),nnonzerovs.perm=mean(nnonzerovs.perms),call=call,v.init=v, pvals=pval,nperms=nperms,chromx=chromx,chromz=chromz,storevs=storevs, outcome=outcome, pvalbestz=pval)
   return(results)
 }
 
@@ -508,7 +508,7 @@ CCA.permute.xonly<- function(x,z,typex,typez,penaltyxs,penaltyz,niter,v,trace,np
   zstats <- (cc.norm - rowMeans(ccperm.norm))/(apply(ccperm.norm,1,sd) + .05)
   if(trace) cat(fill=T)
   pvals <- apply(sweep(ccperms,1,ccs,"-")>=0,1,mean)
-  results <- list(zstats=zstats,typex=typex,typez=typez,penaltyxs=penaltyxs,penaltyzs=rep(penaltyz, length(penaltyxs)),bestpenaltyx=penaltyxs[which.max(zstats)],bestpenaltyz=penaltyz, cors=ccs, corperms=ccperms, ft.cors=cc.norm,ft.corperms=rowMeans(ccperm.norm),nnonzerous=nnonzerous,nnonzerovs=nnonzerovs, nnonzerous.perm=rowMeans(nnonzerous.perms),nnonzerovs.perm=rowMeans(nnonzerovs.perms),call=call,v.init=v, pvals=pvals,nperms=nperms,chromx=chromx,chromz=chromz,storevs=storevs, outcome=outcome)
+  results <- list(zstats=zstats,typex=typex,typez=typez,penaltyxs=penaltyxs,penaltyzs=rep(penaltyz, length(penaltyxs)),bestpenaltyx=penaltyxs[which.max(zstats)],bestpenaltyz=penaltyz, cors=ccs, corperms=ccperms, ft.cors=cc.norm,ft.corperms=rowMeans(ccperm.norm),nnonzerous=nnonzerous,nnonzerovs=nnonzerovs, nnonzerous.perm=rowMeans(nnonzerous.perms),nnonzerovs.perm=rowMeans(nnonzerovs.perms),call=call,v.init=v, pvals=pvals,nperms=nperms,chromx=chromx,chromz=chromz,storevs=storevs, outcome=outcome, pvalbestz=pvals[which.max(zstats)])
   return(results)
 }
 
