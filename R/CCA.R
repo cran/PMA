@@ -5,6 +5,8 @@ library(plyr)
 
 
 CCA <- function(x, z, typex=c("standard", "ordered"), typez=c("standard","ordered"), penaltyx=NULL, penaltyz=NULL, K=1, niter=15, v=NULL, trace=TRUE, standardize=TRUE, xnames=NULL, znames=NULL, chromx=NULL, chromz=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL, y=NULL, cens=NULL){
+  if(ncol(x)<2) stop("Need at least two features in dataset x.")
+  if(ncol(z)<2) stop("Need at least two features in dataset z.")
   if(upos && uneg) stop("At most one of upos and uneg should be TRUE!")
   if(vpos && vneg)  stop("At most one of vpos and vneg should be TRUE!")
   if(typez=="ordered" && (vpos||vneg)) stop("Cannot require elements of v to be positive or negative if typez is ordered")
@@ -539,6 +541,8 @@ CCA.permute.xonly<- function(x,z,typex,typez,penaltyxs,penaltyz,niter,v,trace,np
 
 
 CCA.permute <- function(x,z,typex=c("standard", "ordered"), typez=c("standard","ordered"), penaltyxs=NULL, penaltyzs=NULL, niter=3,v=NULL,trace=TRUE,nperms=25, standardize=TRUE, chromx=NULL, chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL, y=NULL, cens=NULL){
+  if(ncol(x)<2) stop("Need at least 2 features in data set x.")
+  if(ncol(z)<2) stop("Need at least 2 features in data set z.")
   u <- NULL
   typex <- match.arg(typex)
   typez <- match.arg(typez)

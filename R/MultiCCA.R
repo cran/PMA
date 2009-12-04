@@ -53,6 +53,7 @@ MultiCCA.permute <- function(xlist, penalties=NULL, ws=NULL, type="standard", np
   call <- match.call()
   K <- length(xlist)
   for(k in 1:K){
+    if(ncol(xlist[[k]])<2) stop("Need at least 2 features in each data set!")
     if(standardize) xlist[[k]] <- scale(xlist[[k]], T, T)
   }
   if(length(type)==1) type <- rep(type, K) # If type is just a single element, expand to make a vector of length(xlist)
@@ -106,6 +107,9 @@ MultiCCA.permute <- function(xlist, penalties=NULL, ws=NULL, type="standard", np
 }
 
 MultiCCA <- function(xlist, penalty=NULL, ws=NULL, niter=25, type="standard", ncomponents=1, trace=TRUE, standardize=TRUE){
+  for(i in 1:length(xlist)){
+    if(ncol(xlist[[i]])<2) stop("Need at least 2 features in each data set.")
+  }
   call <- match.call()
   K <- length(xlist)
   if(length(type)==1) type <- rep(type, K) # If type is just a single element, expand to make a vector of length(xlist)
