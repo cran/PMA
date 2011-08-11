@@ -1,8 +1,10 @@
 # Error warnings from pam
 cor.options <- list(debug=TRUE, #whether to turn on debugging or not
-                     err.file=ifelse(.Platform$OS.type=="windows", "C:/cortrace.txt", "cortrace.txt"),
-                     image.file=ifelse(.Platform$OS.type=="windows", "C:/corimage.Rdata", "corimage.Rdata"),                     
-                     reserved.class.label="Unspecified")
+                    err.file=ifelse(.Platform$OS.type=="windows",
+                      paste(tempdir(), "cortrace.txt", sep=.Platform$file.sep), "cortrace.txt"),
+                    image.file=ifelse(.Platform$OS.type=="windows",
+                      paste(tempdir(), "corimage.Rdata", sep=.Platform$file.sep),"corimage.Rdata"),                     
+                    reserved.class.label="Unspecified")
 
 ##
 ## Our error handler
@@ -339,11 +341,11 @@ cor.xl.RunAnalysis = function(boollst1, boollst2, K)	{
 
 
 cor.xl.Plot1 = function() {
-	
-	#!!!!!
-	png("C:/cor.perm.png")
-	plot(cor.xl.glob.get("permute.output"))
-	dev.off()
+  fileName = tempfile(fileext=".png")
+  cor.xl.glob.assign("plot1File", fileName)
+  png(fileName)
+  plot(cor.xl.glob.get("permute.output"))
+  dev.off()
 		
 }
 
@@ -358,7 +360,10 @@ cor.xl.Plot2 = function() {
 	else
 		{chrom = NULL}
 	#!!!!!
-	png("C:/cor.data1comp1.png")
+        fileName = tempfile(fileext=".png")
+        cor.xl.glob.assign("plot2File", fileName)
+
+          png(fileName)
 	PlotCGH(cor.xl.glob.get("output")$u[,1], chrom=chrom)
         title("Component 1, Data Set 1")
 	dev.off()
@@ -373,7 +378,9 @@ cor.xl.Plot2a = function() {
         else
                 {chrom = NULL}
         #!!!!!
-        png("C:/cor.data1comp2.png")
+        fileName = tempfile(fileext=".png")
+        cor.xl.glob.assign("plot2aFile", fileName)
+        png(fileName)
         PlotCGH(cor.xl.glob.get("output")$u[,2], chrom=chrom)
         title("Component 2, Data Set 1")
         dev.off()
@@ -388,7 +395,10 @@ cor.xl.Plot2b = function() {
         else
                 {chrom = NULL}
         #!!!!!
- png("C:/cor.data1comp3.png")
+
+        fileName = tempfile(fileext=".png")
+        cor.xl.glob.assign("plot2bFile", fileName)
+          png(fileName)
         PlotCGH(cor.xl.glob.get("output")$u[,3], chrom=chrom)
         title("Component 3, Data Set 1")
         dev.off()
@@ -404,7 +414,9 @@ cor.xl.Plot3 = function() {
 	else
 		{chrom = NULL}
 	#!!!!!
-     png("C:/cor.data2comp1.png")
+        fileName = tempfile(fileext=".png")
+        cor.xl.glob.assign("plot3File", fileName)
+        png(fileName)
 	PlotCGH(cor.xl.glob.get("output")$v[,1], chrom=chrom)
         title("Component 1, Data Set 2")
 	dev.off()
@@ -420,7 +432,9 @@ cor.xl.Plot3a = function() {
         else
                 {chrom = NULL}
         #!!!!!
-     png("C:/cor.data2comp2.png")
+        fileName = tempfile(fileext=".png")
+        cor.xl.glob.assign("plot3aFile", fileName)
+        png(fileName)
         PlotCGH(cor.xl.glob.get("output")$v[,2], chrom=chrom)
         title("Component 2, Data Set 2")
         dev.off()
@@ -435,7 +449,9 @@ cor.xl.Plot3b = function() {
         else
                 {chrom = NULL}
         #!!!!!
-     png("C:/cor.data2comp3.png")
+        fileName = tempfile(fileext=".png")
+        cor.xl.glob.assign("plot3bFile", fileName)
+        png(fileName)
         PlotCGH(cor.xl.glob.get("output")$v[,3], chrom=chrom)
         title("Component 3, Data Set 2")
         dev.off()
