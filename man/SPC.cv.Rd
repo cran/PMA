@@ -1,5 +1,7 @@
 \name{SPC.cv}
 \alias{SPC.cv}
+\alias{plot.SPC.cv}
+\alias{print.SPC.cv}
 \title{Perform cross-validation on  sparse principal component analysis}
 \description{
 Selects tuning parameter for the sparse principal component analysis
@@ -12,6 +14,8 @@ $L_1$ norm - of the elements of the sparse principal component.
 \usage{
 SPC.cv(x, sumabsvs=seq(1.2, 5,len=10), nfolds=5, niter=5, v=NULL,
 trace=TRUE, orth=FALSE, center=TRUE, vpos=FALSE, vneg=FALSE)
+\method{plot}{SPC.cv}(x,...)
+\method{print}{SPC.cv}(x,...)
 }
 \arguments{
   \item{x}{Data matrix of dimension $n x p$, which can contain NA
@@ -39,6 +43,7 @@ trace=TRUE, orth=FALSE, center=TRUE, vpos=FALSE, vneg=FALSE)
   \item{center}{Subtract out mean of x? Default is TRUE}
   \item{vpos}{Constrain elements of v to be positive? Default is FALSE.}
   \item{vneg}{Constrain elements of v to be negative? Default is FALSE.}
+  \item{\dots}{ not used. } 
 }
 \details{
 This method only performs cross-validation for  the first sparse

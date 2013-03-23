@@ -1,5 +1,6 @@
 \name{MultiCCA}
 \alias{MultiCCA}
+\alias{print.MultiCCA}
 \title{Perform sparse multiple canonical correlation analysis.}
 \description{
 Given matrices $X1,...,XK$, which represent K sets of features on the same
@@ -13,6 +14,7 @@ numbers of columns.
 \usage{
 MultiCCA(xlist,  penalty=NULL, ws=NULL,
 niter=25, type="standard", ncomponents=1, trace=TRUE, standardize=TRUE)
+\method{print}{MultiCCA}(x,...)
 }
 \arguments{
   \item{xlist}{A list of length K, where K is the number of data sets on
@@ -43,6 +45,8 @@ this is the parameter for the fused lasso penalty on wk. }
   \item{trace}{Print out progress?}
   \item{standardize}{Should the columns of $X1,...,XK$  be centered (to have mean zero)
     and scaled (to have standard deviation 1)? Default is TRUE.}
+  \item{x}{ not used.}
+  \item{\dots}{ not used. } 
 }
 \value{
   \item{ws}{A list of length K, containg the sparse canonical variates

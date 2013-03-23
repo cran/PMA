@@ -1,5 +1,6 @@
 \name{CCA}
 \alias{CCA}
+\alias{print.CCA}
 \title{Perform sparse canonical correlation analysis using the penalized
 matrix decomposition.}
 \description{
@@ -15,7 +16,9 @@ will be used; this will result in smoothness.
 \usage{
 CCA(x, z, typex=c("standard", "ordered"),typez=c("standard","ordered"), penaltyx=NULL, penaltyz=NULL, K=1,
 niter=15, v=NULL, trace=TRUE, standardize=TRUE, xnames=NULL, znames=NULL, chromx=NULL,
-chromz=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL, y=NULL, cens=NULL)
+chromz=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,
+outcome=NULL, y=NULL, cens=NULL)
+\method{print}{CCA}(x,verbose=FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -88,6 +91,8 @@ chromz=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL, y=NUL
     then these are class labels (1,2,3,...). Default NULL.}
   \item{cens}{If outcome is "survival" then these are censoring statuses
     for each observation. 1 is complete, 0 is censored. Default NULL.}
+  \item{\dots}{ not used. }
+  \item{verbose}{ not used. }
 }
 \details{
 This function is useful for performing an integrative analysis of two

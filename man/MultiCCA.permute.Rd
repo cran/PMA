@@ -1,5 +1,7 @@
 \name{MultiCCA.permute}
 \alias{MultiCCA.permute}
+\alias{print.MultiCCA.permute}
+\alias{plot.MultiCCA.permute}
 \title{Select tuning parameters for sparse multiple canonical correlation
   analysis using the penalized matrix decomposition.}
 \description{
@@ -34,6 +36,8 @@ This function only selets tuning parameters for the FIRST sparse multiple CCA fa
 \usage{
 MultiCCA.permute(xlist, penalties, ws=NULL,
 type="standard", nperms=10, niter=3, trace=TRUE, standardize=TRUE)
+\method{print}{MultiCCA.permute}(x,...)
+\method{plot}{MultiCCA.permute}(x,...)
 }
 \arguments{
  \item{xlist}{A list of length K, where K is the number of data sets on
@@ -76,6 +80,8 @@ or "standard" for this data set.}
   \item{standardize}{Should the columns of X and Z be centered (to have
     mean zero)
     and scaled (to have standard deviation 1)? Default is TRUE.}
+  \item{x}{ not used. }
+  \item{\dots}{ not used. } 
 }
 \details{
   Note that $x1,...,xK$  must have same number of rows. This function performs

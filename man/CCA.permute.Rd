@@ -1,5 +1,7 @@
 \name{CCA.permute}
 \alias{CCA.permute}
+\alias{plot.CCA.permute}
+\alias{print.CCA.permute}
 \title{Select tuning parameters for sparse canonical correlation
   analysis using the penalized matrix decomposition.}
 \description{
@@ -42,7 +44,10 @@ are considered in selection of the tuning parameter.
 \usage{
 CCA.permute(x,z,typex=c("standard", "ordered"),typez=c("standard","ordered"), penaltyxs=NULL, penaltyzs=NULL,
 niter=3,v=NULL,trace=TRUE,nperms=25, standardize=TRUE, chromx=NULL,
-chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL, y=NULL, cens=NULL)
+chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL,
+y=NULL, cens=NULL)
+\method{plot}{CCA.permute}(x,...)
+\method{print}{CCA.permute}(x,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -118,6 +123,7 @@ chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL, y=NULL,
     then these are class labels. Default NULL.}
   \item{cens}{If outcome is "survival" then these are censoring statuses
     for each observation. 1 is complete, 0 is censored. Default NULL.}
+  \item{\dots}{ not used. } 
 }
 \details{
   Note that x and z must have same number of rows. This function performs

@@ -414,7 +414,7 @@ void Groups::printGroups(ostream& outStream)
         outStream << endl << "MaxFlowGraph" << endl;
         if(groups[i].active)
         {
-            groups[i].m->printGraph(outStream);
+            //groups[i].m->printGraph(outStream);
         }
         
         outStream << "---------------------------------------------------------------------" << endl;

@@ -185,7 +185,7 @@ int MaxFlowGraph::findDist(int nodeNum)
 }
 
 
-void MaxFlowGraph::preprocess(const int sourceNode, const int sinkNode, ostream& outStream, bool output)
+void MaxFlowGraph::preprocess(const int sourceNode, const int sinkNode)
 {
     // compute the distance label from the sink using the current flow
     dist = distance(sinkNode);
@@ -196,11 +196,6 @@ void MaxFlowGraph::preprocess(const int sourceNode, const int sinkNode, ostream&
     
     // set all the excess flows to 0
     exFlow.assign(nodes.size(),0);
-    
-    if(output)
-    {
-        printGraph(outStream);
-    }
     
     // go through all nodes connected to the source and push the maximum flow
     MaxFlowNode::iterator edgeIt;
@@ -219,11 +214,6 @@ void MaxFlowGraph::preprocess(const int sourceNode, const int sinkNode, ostream&
         }
     }
     dist[sourceNode] = nodes.size();
-    if(output)
-    {
-        printGraph(outStream);
-        printActiveNodes(outStream);
-    }
 }
 
 bool MaxFlowGraph::pushRelabel(const int i, const int sourceNode, const int sinkNode)
@@ -504,20 +494,15 @@ MaxFlowGraph::MaxFlowGraph(const set<int>& graphNodes):nodes(graphNodes.size()+2
 
 // Do the preflow-push algorithm to find the maximal flow, using the currently saved flow;
 // initialization to 0 has to be done seperately by hand
-bool MaxFlowGraph::findMaxFlow(const int sourceNode, const int sinkNode, ostream& outStream, bool output)
+bool MaxFlowGraph::findMaxFlow(const int sourceNode, const int sinkNode)
 {
     int activeNodeNum;
-    preprocess(sourceNode, sinkNode, outStream, output);
+    preprocess(sourceNode, sinkNode);
     while(getLargestActiveNode(activeNodeNum))
     {
         if(pushRelabel(activeNodeNum,sourceNode, sinkNode)) // node remains active; if inactive, does not need to be replaced
         {
             insertActiveNode(activeNodeNum);
-        }
-        if(output)
-        {
-            printGraph(outStream);
-            printActiveNodes(outStream);
         }
     }
 
@@ -525,7 +510,7 @@ bool MaxFlowGraph::findMaxFlow(const int sourceNode, const int sinkNode, ostream
 }
 
 
-double MaxFlowGraph::validUntil(ostream& outStream, bool giveOutput)
+double MaxFlowGraph::validUntil()
 {
     MaxFlowNodes::iterator nodeIt;
     MaxFlowNode::iterator edgeIt;
@@ -534,7 +519,6 @@ double MaxFlowGraph::validUntil(ostream& outStream, bool giveOutput)
     double validLambda=infinite;
     double foo, offset;
     
-    outStream.precision(15);
     // go through all edges except those connected to the source or the sink
     for(nodeIt = nodes.begin()+2; nodeIt != nodes.end(); ++nodeIt)
     {
@@ -558,12 +542,6 @@ double MaxFlowGraph::validUntil(ostream& outStream, bool giveOutput)
                             foo = e->lambda + offset;
                             validLambda = Min(validLambda, foo);
                         }
-                        if(giveOutput)
-                        {
-                            
-                            outStream << "From: " << nodeIt-nodes.begin() << " To: " << edgeIt->to <<
-                                    " Value: " << validLambda << endl;
-                        }
                     }
                }
             }
@@ -573,7 +551,6 @@ double MaxFlowGraph::validUntil(ostream& outStream, bool giveOutput)
     {
         validLambda=neverSplit;
     }
-    outStream.precision(5);
     return(validLambda);
 }
 
@@ -623,7 +600,7 @@ void MaxFlowGraph::updateTension(const double newLambda)
 
 
 
-double MaxFlowGraph::calcTensionChange(const double lambda,ostream& outStream, bool giveOutput)
+double MaxFlowGraph::calcTensionChange(const double lambda)
 {
     // first update the tensions
     updateTension(lambda);
@@ -643,7 +620,7 @@ double MaxFlowGraph::calcTensionChange(const double lambda,ostream& outStream, b
         setCapacity();
         if(findMaxFlow(source, sink))
         {
-            return(validUntil(outStream, giveOutput));
+            return(validUntil());
         }
         else
         {
@@ -654,7 +631,7 @@ double MaxFlowGraph::calcTensionChange(const double lambda,ostream& outStream, b
 
 
 
-double MaxFlowGraph::calcTensionChangeUpdate(const double lambda, ostream& outStream, bool giveOutput)
+double MaxFlowGraph::calcTensionChangeUpdate(const double lambda)
 {
     stringstream updateOutput;
     // update the tension in the graph
@@ -669,7 +646,6 @@ double MaxFlowGraph::calcTensionChangeUpdate(const double lambda, ostream& outSt
     
     // do the maximum flow
     bool result = findMaxFlow(newNodes.first, newNodes.second);
-    printGraph(updateOutput);
     // remove the new source and sink node
     removeSpecialSourceSink(overFlow, newNodes.first, newNodes.second);
     
@@ -685,6 +661,7 @@ double MaxFlowGraph::calcTensionChangeUpdate(const double lambda, ostream& outSt
         result = findMaxFlow(source, sink);
         if(result) // this should not happen, stop with an error (can be thrown out later because it should be unncecessary
         {
+/*
             cout << "Found a possible flow in calcTensionChangeUpdate although deemed impossible" << endl;
             char foo[256];
             while(!updateOutput.eof())
@@ -696,13 +673,14 @@ double MaxFlowGraph::calcTensionChangeUpdate(const double lambda, ostream& outSt
 
             printGraph(cout);
             exit(1);
+*/
         }
         return(splitNow);
     }
 }
 
 
-double MaxFlowGraph::calcTensionChangeProportional(const double lambda,ostream& outStream, bool giveOutput)
+double MaxFlowGraph::calcTensionChangeProportional(const double lambda)
 {
     // first update the tensions
     double currentFlow, currentFactor, deltaFactor, deltaFlow, maxFlow;
@@ -724,12 +702,6 @@ double MaxFlowGraph::calcTensionChangeProportional(const double lambda,ostream& 
     deltaFactor = currentFactor;
     deltaFlow = currentFlow;
     setCapacityProportional(currentFactor);
-    if(giveOutput)
-    {
-        printGraph(outStream);
-        outStream << "Old Flow: " << currentFlow << endl;
-        outStream << "Old Factor: " << currentFactor << endl;
-    }
     while(!findMaxFlow(source, sink))
     {
         deltaFlow = currentFlowFromSource(source) - currentFlow;
@@ -737,23 +709,13 @@ double MaxFlowGraph::calcTensionChangeProportional(const double lambda,ostream& 
         // now calculate the new necessary increase in the factor
         deltaFactor = deltaFactor * (maxFlow-currentFlow)/deltaFlow;
         currentFactor+=deltaFactor;
-        if(giveOutput)
-        {
-            outStream << "Current Flow: " << currentFlow << endl;
-            outStream << "current Factor: " << currentFactor << endl;
-            printGraph(outStream);
-        }
         
         if(deltaFlow < tolerance){ // no increase anymore; won't finish
             return(splitNow);}
         
         setCapacityProportional(currentFactor);
     }
-    if(giveOutput)
-    {
-        printGraph(outStream);
-    }
-    return(validUntil(outStream, giveOutput));
+    return(validUntil());
 }
 
 
@@ -831,6 +793,7 @@ MaxFlowGraph::~MaxFlowGraph()
 }
     
     
+/*
 void MaxFlowGraph::printGraph(ostream& outStream)
 {
     int edgeNum, nodeNum;
@@ -886,11 +849,11 @@ void MaxFlowGraph::printGraph(ostream& outStream)
         outStream << endl;
     }
     
-/*    map<int,int>::iterator MI;
-    for(MI = nodeMapExtToInt.begin(); MI!=nodeMapExtToInt.end(); ++MI)
-    {
-        outStream << MI->first << " " << MI->second << endl;
-    }*/
+//    map<int,int>::iterator MI;
+//    for(MI = nodeMapExtToInt.begin(); MI!=nodeMapExtToInt.end(); ++MI)
+//    {
+//        outStream << MI->first << " " << MI->second << endl;
+//    }
     
     outStream << endl;
 }
@@ -909,6 +872,7 @@ void MaxFlowGraph::printActiveNodes(ostream& outStream)
         }
     }
 }
+*/
 
 
 /*

@@ -104,7 +104,7 @@ PMDL1FL <- function(x,K=1,sumabsu=5,lambda=NULL,chrom=NULL,niter=20, v=NULL, tra
   out$cnames <- cnames
   out$call <- call
   out$meanx <- meanx
-  class(out) <- "pmdl1fl"
+  class(out) <- "PMDL1FL"
   if(trace) cat(fill=TRUE)
   return(out)
 }

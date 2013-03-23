@@ -1,5 +1,6 @@
 \name{SPC}
 \alias{SPC}
+\alias{print.SPC}
 \title{Perform sparse principal component analysis}
 \description{
 Performs sparse principal components analysis by applying PMD to a data
@@ -8,6 +9,7 @@ matrix with lasso ($L_1$) penalty on the columns and no penalty on the rows.
 \usage{
 SPC(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL,
 center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE, compute.pve=TRUE)
+\method{print}{SPC}(x,verbose=FALSE,...)
 }
 \arguments{
   \item{x}{Data matrix of dimension $n x p$, which can contain NA
@@ -40,6 +42,8 @@ center=TRUE, cnames=NULL, vpos=FALSE, vneg=FALSE, compute.pve=TRUE)
     FALSE.}
   \item{compute.pve}{Compute percent variance explained? Default
     TRUE. If not needed, then choose FALSE to save time.}
+  \item{\dots}{ not used. }
+  \item{verbose}{ not used. }
 }
 \details{
 PMD(x,sumabsu=sqrt(nrow(x)), sumabsv=3, K=1) and SPC(x,sumabsv=3, K=1) give the

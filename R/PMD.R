@@ -151,11 +151,11 @@ SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, cen
   }
   out$vpos <- vpos
   out$vneg <- vneg
-  class(out) <- "spc"
+  class(out) <- "SPC"
   return(out)
 }
 
-print.spc <- function(x,verbose=FALSE,...){
+print.SPC <- function(x,verbose=FALSE,...){
   cat("Call: ")
   dput(x$call)
   cat("\n\n")
@@ -188,10 +188,10 @@ PMD <- function(x, type=c("standard", "ordered"), sumabs=.4, sumabsu=5, sumabsv=
   type <- match.arg(type)
   if(type=="standard"){
     out <- PMDL1L1(x, sumabs=sumabs, sumabsu=sumabsu, sumabsv=sumabsv, niter=niter, K=K, v=v, trace=trace, center=center, rnames=rnames, cnames=cnames, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
-    class(out) <- "pmdl1l1"
+    class(out) <- "PMDL1L1"
   } else if(type=="ordered"){
     out <- PMDL1FL(x,K=K,sumabsu=sumabsu,lambda=lambda,chrom=chrom,niter=niter, v=v, trace=trace, center=center, rnames=rnames, cnames=cnames, upos=upos, uneg=uneg)
-    class(out) <- "pmdl1fl"
+    class(out) <- "PMDL1FL"
   }
   out$upos <- upos
   out$uneg <- uneg
@@ -208,10 +208,10 @@ PMD.cv <- function(x, type=c("standard", "ordered"), sumabss=seq(0.1,0.7,len=10)
   type <- match.arg(type) 
   if(type=="standard"){
     out <- PMDL1L1.cv(x, sumabss=sumabss, nfolds=nfolds, niter=niter, v=v, trace=trace, center=center, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
-    class(out) <- "pmdl1l1cv"
+    class(out) <- "PMDL1L1.cv"
   } else if(type=="ordered"){
     out <- PMDL1FL.cv(x, nfolds=nfolds, niter=niter, lambda=lambda, sumabsus=sumabsus, chrom=chrom, v=v, trace=trace, nuc=nuc, center=center, upos=upos, uneg=uneg)
-    class(out) <- "pmdl1flcv"
+    class(out) <- "PMDL1FL.cv"
   }
   out$upos <- upos
   out$uneg <- uneg
@@ -250,11 +250,11 @@ PMDL1L1 <- function(x,sumabs=.4,sumabsu=NULL,sumabsv=NULL,niter=20,K=1,v=NULL, t
   if(K>1 && orth) out <- MultiSMDOrth(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter,K=K, trace=trace, v=v,  vpos=vpos, vneg=vneg)
   if(K==1) out <- SMD(x,sumabsu=sumabsu,sumabsv=sumabsv,niter=niter, trace=trace, v=v, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg)
   obj <- (list(u=out$u,v=out$v, d=out$d, v.init=out$v.init, call=call, meanx=meanx,sumabsu=sumabsu, sumabsv=sumabsv, rnames=rnames, cnames=cnames, K=K, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg))
-  class(obj) <- "pmdl1l1"
+  class(obj) <- "PMDL1L1"
   return(obj)
 }
 
-print.pmdl1l1 <- function(x,verbose=FALSE,...){
+print.PMDL1L1 <- function(x,verbose=FALSE,...){
   cat("Call: ")
   dput(x$call)
   cat("\n\n")
@@ -286,7 +286,7 @@ print.pmdl1l1 <- function(x,verbose=FALSE,...){
   if(x$vneg) cat("Elements of v constrained to be negative.", fill=TRUE)
 }
 
-print.pmdl1fl <- function(x,verbose=FALSE,...){
+print.PMDL1FL <- function(x,verbose=FALSE,...){
   cat("Call: ")
   dput(x$call)
   cat("\n\n")
@@ -389,7 +389,7 @@ PMDL1L1.cv <- function(x, sumabss=seq(0.1,0.7,len=10), nfolds=5, niter=5, v=NULL
   nonzerovs.mean <- apply(nonzerovs,2,mean)
   bestsumabs <- sumabss[which.min(err.means)]
   object <- (list(cv=err.means, cv.error=err.sds,bestsumabs=bestsumabs, nonzerous=nonzerous.mean, nonzerovs=nonzerovs.mean, v.init=v, call=call, sumabss=sumabss, nfolds=nfolds))
-  class(object) <- "pmdl1l1cv"
+  class(object) <- "PMDL1L1.cv"
   return(object) 
 }
 
@@ -424,11 +424,11 @@ SPC.cv <- function(x, sumabsvs=seq(1.2,5,len=10), nfolds=5, niter=5, v=NULL, tra
   bestsumabsv <- sumabsvs[which.min(err.means)]
   bestsumabsv1se <- sumabsvs[min(which(err.means < min(err.means) + err.sds[which.min(err.means)]))]
   object <- (list(cv=err.means, cv.error=err.sds,bestsumabsv=bestsumabsv,nonzerovs=nonzerovs.mean, v.init=v, call=call, sumabsvs=sumabsvs, nfolds=nfolds, bestsumabsv1se=bestsumabsv1se, vpos=vpos, vneg=vneg))
-  class(object) <- "spccv"
+  class(object) <- "SPC.cv"
   return(object) 
 }
 
-plot.spccv <- function(x,...){
+plot.SPC.cv <- function(x,...){
   sumabsvs <- x$sumabsvs
   err.means <- x$cv
   err.sds <- x$cv.error
@@ -440,7 +440,7 @@ plot.spccv <- function(x,...){
 
 
 
-print.spccv <- function(x,...){
+print.SPC.cv <- function(x,...){
   cat("Call:\n")
   dput(x$call)
   cat("\n \n")
@@ -454,7 +454,7 @@ print.spccv <- function(x,...){
   if(x$vneg) cat("Elements of v constrained to be negative.", fill=TRUE)
 }
 
-print.pmdl1l1cv <- function(x,...){
+print.PMDL1L1.cv <- function(x,...){
   cat("Call:\n")
   dput(x$call)
   cat("\n \n")
@@ -469,7 +469,7 @@ print.pmdl1l1cv <- function(x,...){
   if(x$vneg) cat("Elements of v constrained to be negative.", fill=TRUE)
 }
 
-plot.pmdl1l1cv <- function(x,...){
+plot.PMDL1L1.cv <- function(x,...){
   sumabss <- x$sumabss
   err.means <- x$cv
   err.sds <- x$cv.error
@@ -514,11 +514,11 @@ PMDL1FL.cv <- function(x, nfolds=5, niter=5, lambda=NULL, sumabsus=NULL, chrom=N
   bestind <- which.min(err.means)
   bestsumabsu <- sumabsus[bestind]
   object <- (list(cv=err.means, lambda=lambda,cv.error=err.sds,bestsumabsu=bestsumabsu, nonzerous=nonzerous.mean, nonzerovs=nonzerovs.mean, v.init=v, call=call, sumabsus=sumabsus, nfolds=nfolds,x=x,chrom=chrom,nuc=nuc, niter=niter))
-  class(object) <- "pmdl1flcv"
+  class(object) <- "PMDL1FL.cv"
   return(object) 
 }
 
-plot.pmdl1flcv <- function(x,...){
+plot.PMDL1FL.cv <- function(x,...){
   mat <- x$x
   sumabsus <- x$sumabsus
   err.means <- x$cv
@@ -538,7 +538,7 @@ plot.pmdl1flcv <- function(x,...){
   PlotCGH(out$v, main="Best V", chrom=chrom, nuc=nuc)
 }
 
-print.pmdl1flcv <- function(x,...){
+print.PMDL1FL.cv <- function(x,...){
   cat("Call:\n")
   dput(x$call)
   cat("\n \n")

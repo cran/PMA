@@ -102,7 +102,7 @@ MultiCCA.permute <- function(xlist, penalties=NULL, ws=NULL, type="standard", np
   }
   if(trace) cat(fill=TRUE)
   out <- list(pvals=pvals, zstat=zs, bestpenalties=penalties[,which.max(zs)], cors=cors, corperms=permcors, numnonzeros=numnonzeros, ws.init=ws.init, call=call, penalties=penalties, type=type, nperms=nperms)
-  class(out) <- "multiccaperm"
+  class(out) <- "MultiCCA.permute"
   return(out)
 }
 
@@ -170,11 +170,11 @@ MultiCCA <- function(xlist, penalty=NULL, ws=NULL, niter=25, type="standard", nc
     cors <- c(cors, GetCors(xlist, ws,K))
   }
   out <- list(ws=ws.final, ws.init=ws.init, K=K, call=call, type=type, penalty=penalty, cors=cors)
-  class(out) <- "multicca"
+  class(out) <- "MultiCCA"
   return(out)
 }
 
-print.multicca <- function(x,...){
+print.MultiCCA <- function(x,...){
   cat("Call: ")
   dput(x$call)
   cat("\n\n")
@@ -194,7 +194,7 @@ print.multicca <- function(x,...){
 
 
 
-print.multiccaperm <- function(x,...){
+print.MultiCCA.permute <- function(x,...){
   cat("Call: ")
   dput(x$call)
   cat("\n\n")
@@ -212,7 +212,7 @@ print.multiccaperm <- function(x,...){
   print(sumabslamvecs,quote=FALSE)
 }
 
-plot.multiccaperm <- function(x,...){
+plot.MultiCCA.permute <- function(x,...){
   sumabss <- x$penalties
   ccs <- x$cors
   nperms <- x$nperms

@@ -70,12 +70,12 @@ CCA <- function(x, z, typex=c("standard", "ordered"), typez=c("standard","ordere
   for(k in 1:K){
     if(sum(out$u[,k]!=0)>0 && sum(out$v[,k]!=0)>0) out$cors[k] <- cor(x%*%out$u[,k],z%*%out$v[,k])
   }
-  class(out) <- "cca"
+  class(out) <- "CCA"
   return(out)
 }
 
 
-print.cca <- function(x,verbose=FALSE,...){
+print.CCA <- function(x,verbose=FALSE,...){
   cat("Call: ")
   dput(x$call)
   cat("\n\n")
@@ -353,7 +353,7 @@ CCA.permute.both <- function(x,z,typex,typez,penaltyxs,penaltyzs,niter,v,trace,n
 
 
   
-plot.ccaperm <- function(x,...){
+plot.CCA.permute <- function(x,...){
   penaltyxs <- x$penaltyxs
   penaltyzs <- x$penaltyzs
   if(length(penaltyxs)==1 && length(penaltyzs)==1) stop("Cannot plot output of CCA.permute if only 1 tuning parameter was considered.")
@@ -573,11 +573,11 @@ CCA.permute <- function(x,z,typex=c("standard", "ordered"), typez=c("standard","
   out$uneg <- uneg
   out$vpos <- vpos
   out$vneg <- vneg
-  class(out) <- "ccaperm"
+  class(out) <- "CCA.permute"
   return(out)
 }
 
-print.ccaperm <- function(x,...){
+print.CCA.permute <- function(x,...){
   cat("Call: ")
   dput(x$call)
   cat("\n")
