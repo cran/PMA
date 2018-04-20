@@ -1,8 +1,8 @@
 Package: PMA
 Type: Package
 Title: Penalized Multivariate Analysis
-Version: 1.0.10
-Date: 2018-04-19
+Version: 1.0.11
+Date: 2018-04-20
 Author: Daniela Witten and Rob Tibshirani and Sam Gross and
         Balasubramanian Narasimhan
 Maintainer: ORPHANED
@@ -18,10 +18,10 @@ Description: Performs Penalized Multivariate Analysis: a penalized
         Genetics and Molecular Biology 8(1): Article 28.
 License: GPL (>= 2)
 Depends: R (>= 2.10), impute
-Packaged: 2018-04-19 07:42:48 UTC; ripley
+Packaged: 2018-04-20 07:44:05 UTC; ripley
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2018-04-20 07:03:17 UTC
+Date/Publication: 2018-04-20 07:47:39 UTC
 X-CRAN-Original-Maintainer: Daniela Witten <dwitten@u.washington.edu>
 X-CRAN-Comment: Orphaned and corrected on 2018-04-20 as check problems
         were not corrected despite multiple notifications.

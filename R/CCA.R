@@ -1,6 +1,3 @@
-library(plyr)
-#require('plyr')
-
 # This contains what used to be in CGH.SparseCCA.R and MultiSparseCCA.R
 
 
