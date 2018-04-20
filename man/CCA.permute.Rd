@@ -42,7 +42,8 @@ Using this function, only the first left and right canonical variates
 are considered in selection of the tuning parameter.
 }
 \usage{
-CCA.permute(x,z,typex=c("standard", "ordered"),typez=c("standard","ordered"), penaltyxs=NULL, penaltyzs=NULL,
+CCA.permute(x,z,typex=c("standard", "ordered"),typez=c("standard","ordered"),
+	    penaltyxs=NULL, penaltyzs=NULL,
 niter=3,v=NULL,trace=TRUE,nperms=25, standardize=TRUE, chromx=NULL,
 chromz=NULL,upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,outcome=NULL,
 y=NULL, cens=NULL)

@@ -1,1 +1,26 @@
 export(print.MultiCCA, print.MultiCCA.permute, MultiCCA, MultiCCA.permute, PMD, PMD.cv, SPC.cv, print.SPC.cv, plot.SPC.cv, SPC, print.SPC, print.CCA, print.CCA.permute,CCA,CCA.permute, print.PMDL1FL, print.PMDL1FL.cv,print.PMDL1L1, print.PMDL1L1.cv,PlotCGH, plot.PMDL1L1.cv, plot.PMDL1FL.cv,plot.CCA.permute, plot.MultiCCA.permute,  cor.xl.LoadData, cor.xl.RunAnalysis, cor.xl.Plot1, cor.xl.Plot2, cor.xl.Plot3,cor.xl.Plot2a,cor.xl.Plot2b,cor.xl.Plot3a,cor.xl.Plot3b)
+
+importFrom("grDevices", "dev.off", "png")
+importFrom("graphics", "lines", "par", "plot", "points", "segments",
+           "text", "title")
+importFrom("stats", "cor", "lowess", "lsfit", "quantile", "rnorm",
+           "runif", "sd")
+importFrom(impute, impute.knn)
+
+S3method(plot, CCA.permute)
+S3method(plot, MultiCCA.permute)
+S3method(plot, PMDL1FL.cv)
+S3method(plot, PMDL1L1.cv)
+S3method(plot, SPC.cv)
+
+S3method(print, CCA)
+S3method(print, CCA.permute)
+S3method(print, MultiCCA)
+S3method(print, MultiCCA.permute)
+S3method(print, PMDL1FL)
+S3method(print, PMDL1FL.cv)
+S3method(print, PMDL1L1)
+S3method(print, PMDL1L1.cv)
+S3method(print, SPC)
+S3method(print, SPC.cv)
+

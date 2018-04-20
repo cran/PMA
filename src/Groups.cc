@@ -122,7 +122,7 @@ SEXP Groups::getSolutionObject()
         INTEGER(VECTOR_ELT(solObj,9))[grp]=grpObj.size;
     }
     // transfer the initial mapping of the nodes
-    for(int i=0; i<initialNodeMap.size(); ++i)
+    for(unsigned int i=0; i<initialNodeMap.size(); ++i)
     {
         INTEGER(VECTOR_ELT(solObj,10))[i]=initialNodeMap[i];
     }
@@ -319,7 +319,7 @@ vector<double> Groups::nodeSolution(int node,const vector<double>& lambdas)
             {
                 curGrp=groups[curGrp].grp1;
             }
-            else if(groups[curGrp].action='S') // if it is a split, decide the correct next group
+            else if(groups[curGrp].action=='S') // if it is a split, decide the correct next group
             {
                 // check if node goes into the first or second new grp
                 if(groups[curGrp].splitNodes.count(node)>0) // first group
@@ -385,19 +385,19 @@ void Groups::printGroups(ostream& outStream)
 {
     //print the initial mapping between the nodes and the groups
     outStream << "Initial mapping of the nodes:" << endl;
-    for(int i=0; i<initialNodeMap.size(); ++i)
+    for(unsigned int i=0; i<initialNodeMap.size(); ++i)
     {
         outStream << "Node: " << i << " Group: " << initialNodeMap[i] << endl;
     }
     // print the current mapping between the nodes and the groups
     outStream << "Current mapping of the nodes:" << endl;
-    for(int i=0; i<nodeMap.size(); ++i)
+    for(unsigned int i=0; i<nodeMap.size(); ++i)
     {
         outStream << "Node: " << i << " Group: " << nodeMap[i] << endl;
     }
     
 
-    for(int i=0; i<groups.size(); ++i)
+    for(unsigned int i=0; i<groups.size(); ++i)
     {
         outStream << "-------------------------------------------------------" << endl;
         outStream << "Group Number: " << i << endl;

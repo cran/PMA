@@ -12,7 +12,7 @@ using namespace std;
 
 void FLSAClass::addConnection(int grpOne, int grpTwo, double lambda)
 {
-    double lambdaCorr, y1,y2, deriv1, deriv2;
+    double  y1,y2, deriv1, deriv2;
     Connection conn;
     
     y1 = getCurrMu(groupVec[grpOne],lambda);
@@ -38,7 +38,7 @@ void FLSAClass::addConnection(int grpOne, int grpTwo, double lambda)
             groupMove.insert(make_pair(lambdaCorr + lambda, conn));
         }
     }
-};
+}
 
 
 vector<int> FLSAClass::getNeighbours(int grpNum, int exclGrp)
@@ -60,7 +60,7 @@ vector<int> FLSAClass::getNeighbours(int grpNum, int exclGrp)
 
 void FLSAClass::updateNeighbours(vector<int> updateGrp, int oldGrp, int newGrp)
 {
-    for(int i=0; i< updateGrp.size(); ++i)
+    for(unsigned int i=0; i< updateGrp.size(); ++i)
     {
         // number of neighbours in the group to update
         int numNeighbours = groupVec[updateGrp[i]].neighbour.size();
@@ -176,7 +176,7 @@ FLSAClass::FLSAClass(SEXP yR)
     {
         addConnection(i,i+1, 0);
     }
-};
+}
 
 
 void FLSAClass::mergeGroups(int grpOne, int grpTwo, double lambda)
@@ -216,7 +216,7 @@ void FLSAClass::mergeGroups(int grpOne, int grpTwo, double lambda)
     newNode = groupVec[maxgroup];
     if(newNode.neighbour.size()>0)
     {
-        for(int i=0; i< newNode.neighbour.size(); ++i)
+        for(unsigned int i=0; i< newNode.neighbour.size(); ++i)
         {
             addConnection(newNode.neighbour[i], maxgroup, lambda);
     
@@ -290,7 +290,7 @@ SEXP FLSAClass::solutionTree()
     // unprotect and return
     UNPROTECT(1);
     return(solTree);
-};
+}
 
 /*
 void FLSAClass::printGroupVec()
@@ -372,7 +372,7 @@ SEXP FLSA(SEXP y)
     
     return(res);
 
-};
+}
 
 
 /******************************************************
@@ -427,7 +427,7 @@ SEXP FLSAexplicitSolution(SEXP solTree, SEXP lambdaR)
     // unprotect and return
     UNPROTECT(1);
     return(resMat); // naming of rows and columns can be performed in R itself, easier there
-};
+}
 
 
 }

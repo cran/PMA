@@ -46,8 +46,6 @@ void FLSAGeneral::initializeScheduler()
     set<int> curNode, connNodes,bar, connGroups;
     groupItem curGroupItem, connGroupItem;
     int curGroupNum;
-    double hitTime;
-    scheduleEvent schedEv;
     
     set<int>::iterator setIter, setIter2;
     // go through all nodes
@@ -232,7 +230,6 @@ void FLSAGeneral::doMerging(double lambda, int grp1, int grp2)
         MaxFlowGraph* m;
         int newGroupNum;
         set<int>::iterator setIter;
-        scheduleEvent schedEv;
 
         // get the nodes in the two groups
         foo = groups.getGroup(grp1);
@@ -259,7 +256,7 @@ void FLSAGeneral::doMerging(double lambda, int grp1, int grp2)
         doTension(lambda, newGroupNum, false);
     
     }
-};
+}
 
 
 

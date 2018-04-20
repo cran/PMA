@@ -61,7 +61,7 @@ pair<int,int> MaxFlowGraph::addSpecialSourceSink(const vector<double>& overFlow)
     int newSource = nodes.size();
     int newSink = nodes.size()+1;
     nodes.resize(nodes.size()+2);
-    for(int i=0; i< overFlow.size(); ++i)
+    for(unsigned int i=0; i< overFlow.size(); ++i)
     {
         if(overFlow[i]>0)
         {
@@ -79,7 +79,7 @@ void MaxFlowGraph::removeSpecialSourceSink(const vector<double>& overFlow, const
 {
     int numEdges;
     // first go through all other nodes and delete the appropriate edge, which by construction has to be the last one
-    for(int i=0; i< overFlow.size(); ++i)
+    for(unsigned int i=0; i< overFlow.size(); ++i)
     {
         if(overFlow[i]!=0)
         {
@@ -146,7 +146,7 @@ vector<int> MaxFlowGraph::distance(int start, bool from)
         }
     }
     return(dist);
-};
+}
 
 bool MaxFlowGraph::push(int from, MaxFlowEdge &e, const int sourceNode, const int sinkNode)
 {
@@ -727,7 +727,7 @@ set<int> MaxFlowGraph::reachableFromSource(const int sourceNode)
     // reached
 
     // reachable nodes are all nodes in parent except source and sink
-    for(int i=2; i !=distReach.size(); ++i)
+    for(unsigned int i=2; i !=distReach.size(); ++i)
     {
         if(distReach[i]<nodes.size())
         {

@@ -14,7 +14,7 @@ const int infiniteInt = std::numeric_limits<int>::max();
 double RelDif(double a, double b);
 double RelDifNoAbs(double a, double b);
 
-inline int signum(double x) {return((x>0)-(x<0));};
+inline int signum(double x) {return((x>0)-(x<0));}
 
 
 #endif

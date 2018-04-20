@@ -118,14 +118,14 @@ vector<double> readY(char* fileName)
     }
     
     vector<double> y(help.size());
-    for(int i=0; i<y.size(); ++i)
+    for(unsigned int i=0; i<y.size(); ++i)
     {
         y[i]=help.front();
         help.pop_front();
     }
     inputFile.close();
     return(y);
-};
+}
 
 
 
@@ -156,7 +156,7 @@ SEXP FLSAGeneralMain(SEXP connList, SEXP startValues, SEXP lambdas, SEXP maxSpli
         sol =FLSAGeneralObj.solution(VECTOR_ELT(connList,0), lambdas);
     }
     return(sol);
-};
+}
 
 
 SEXP FLSAGeneralExplicitSolution(SEXP solObj, SEXP nodes, SEXP lambdas)
@@ -203,8 +203,8 @@ SEXP conn2Dim(SEXP dimensions)
     
     UNPROTECT(1);
     return(conn);
-};
+}
 
 
-}; // end of extern C
+} // end of extern C
 

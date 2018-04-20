@@ -40,7 +40,7 @@ void PenaltyGraph::addEdge(int from, int to, int sign)
     
     nodes[from][to]=e1;
     nodes[to][from]=e2;
-};
+}
 
 
 

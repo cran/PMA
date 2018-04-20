@@ -14,10 +14,11 @@ corresponding canonical vector. If ordered, then a fused lasso penalty
 will be used; this will result in smoothness.
 } 
 \usage{
-CCA(x, z, typex=c("standard", "ordered"),typez=c("standard","ordered"), penaltyx=NULL, penaltyz=NULL, K=1,
-niter=15, v=NULL, trace=TRUE, standardize=TRUE, xnames=NULL, znames=NULL, chromx=NULL,
-chromz=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE,
-outcome=NULL, y=NULL, cens=NULL)
+CCA(x, z, typex=c("standard", "ordered"),typez=c("standard","ordered"),
+    penaltyx=NULL, penaltyz=NULL, K=1, niter=15, v=NULL, trace=TRUE,
+    standardize=TRUE, xnames=NULL, znames=NULL, chromx=NULL, chromz=NULL,
+    upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL, 
+    y=NULL, cens=NULL)
 \method{print}{CCA}(x,verbose=FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -156,54 +157,64 @@ print(out,verbose=TRUE) # To get less output, just print(out)
 perm.out <- CCA.permute(x,z,typex="standard",typez="standard",nperms=7)
 print(perm.out)
 plot(perm.out)
-out <- CCA(x,z,typex="standard",typez="standard",K=1,penaltyx=perm.out$bestpenaltyx,penaltyz=perm.out$bestpenaltyz, v=perm.out$v.init)
+out <- CCA(x,z,typex="standard",typez="standard",K=1,
+	   penaltyx=perm.out$bestpenaltyx,penaltyz=perm.out$bestpenaltyz,
+	   v=perm.out$v.init)
 print(out)
 
 
 ##### The remaining examples are commented out, but uncomment to run: ######
 
 # Not run, to save time:
+\dontrun{
 ## Now try CCA with a constraint that elements of u must be negative and
 ## elements of v must be positive:
-#perm.out <- CCA.permute(x,z,typex="standard",typez="standard",nperms=7,
-#penaltyxs=seq(.1,.7,len=10), penaltyzs=seq(.1,.7,len=10), uneg=TRUE, vpos=TRUE)
-#print(perm.out)
-#plot(perm.out)
-#out <- CCA(x,z,typex="standard",typez="standard",K=1,penaltyx=perm.out$bestpenaltyx,penaltyz=perm.out$bestpenaltyz,
-#v=perm.out$v.init, uneg=TRUE, vpos=TRUE)
-#print(out)
-#
-#
+perm.out <- CCA.permute(x,z,typex="standard",typez="standard",nperms=7,
+penaltyxs=seq(.1,.7,len=10), penaltyzs=seq(.1,.7,len=10), uneg=TRUE, vpos=TRUE)
+print(perm.out)
+plot(perm.out)
+out <- CCA(x,z,typex="standard",typez="standard",K=1,
+	   penaltyx=perm.out$bestpenaltyx,penaltyz=perm.out$bestpenaltyz,
+           v=perm.out$v.init, uneg=TRUE, vpos=TRUE)
+print(out)
+
+
 ## Suppose we also have a quantitative outcome, y, and we want to find
 ## features in x and z that are correlated with each other and with the
 ## outcome:
-#y <- rnorm(nrow(x))
-#perm.out <- CCA.permute(x,z,typex="standard",typez="standard",outcome="quantitative",y=y, nperms=6)
-#print(perm.out)
-#out<-CCA(x,z,typex="standard",typez="standard",outcome="quantitative",y=y,penaltyx=perm.out$bestpenaltyx,penaltyz=perm.out$bestpenaltyz)
-#print(out)
-#
+y <- rnorm(nrow(x))
+perm.out <- CCA.permute(x,z,typex="standard",typez="standard",
+			outcome="quantitative",y=y, nperms=6)
+print(perm.out)
+out<-CCA(x,z,typex="standard",typez="standard",outcome="quantitative",
+	 y=y,penaltyx=perm.out$bestpenaltyx,penaltyz=perm.out$bestpenaltyz)
+print(out)
+
 ## now, do CCA with type="ordered"
 ## Example involving the breast cancer data: gene expression + CGH
-#set.seed(22)
-#data(breastdata)
-#attach(breastdata)
-#dna <- t(dna)
-#rna <- t(rna)
-#perm.out <- CCA.permute(x=rna,z=dna[,chrom==1],typex="standard", typez="ordered",nperms=5,penaltyxs=seq(.02,.7,len=10))
+set.seed(22)
+data(breastdata)
+attach(breastdata)
+dna <- t(dna)
+rna <- t(rna)
+perm.out <- CCA.permute(x=rna,z=dna[,chrom==1],typex="standard",
+		       	typez="ordered",nperms=5,penaltyxs=seq(.02,.7,len=10))
 ## We run CCA using all gene exp. data, but CGH data on chrom 1 only.
-#print(perm.out)
-#plot(perm.out)
-#out <- CCA(x=rna,z=dna[,chrom==1], typex="standard", typez="ordered",penaltyx=perm.out$bestpenaltyx,
-#v=perm.out$v.init, penaltyz=perm.out$bestpenaltyz, xnames=substr(genedesc,1,20),
-#znames=paste("Pos", sep="", nuc[chrom==1])) # Save time by inputting  lambda and v
-#print(out) # could do print(out,verbose=TRUE)
-#print(genechr[out$u!=0]) # Cool! The genes associated w/ gain or loss
+print(perm.out)
+plot(perm.out)
+out <- CCA(x=rna,z=dna[,chrom==1], typex="standard", typez="ordered",
+	   penaltyx=perm.out$bestpenaltyx,
+           v=perm.out$v.init, penaltyz=perm.out$bestpenaltyz,
+           xnames=substr(genedesc,1,20),
+           znames=paste("Pos", sep="", nuc[chrom==1]))
+# Save time by inputting  lambda and v
+print(out) # could do print(out,verbose=TRUE)
+print(genechr[out$u!=0]) # Cool! The genes associated w/ gain or loss
 ## on chrom 1 are located on chrom 1!!
-#par(mfrow=c(1,1))
-#PlotCGH(out$v, nuc=nuc[chrom==1], chrom=chrom[chrom==1],
-#main="Regions of gain/loss on Chrom 1 assoc'd with gene expression")
-#detach(breastdata)
-
+par(mfrow=c(1,1))
+PlotCGH(out$v, nuc=nuc[chrom==1], chrom=chrom[chrom==1],
+main="Regions of gain/loss on Chrom 1 assoc'd with gene expression")
+detach(breastdata)
+}
 }
 

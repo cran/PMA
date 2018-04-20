@@ -1,5 +1,6 @@
 #include <R.h>
 #include <Rinternals.h>
+#include <cstdlib> // for NULL
 #include <R_ext/Rdynload.h>
 
 
@@ -24,6 +25,7 @@ extern "C"
         };
         
         R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+	R_useDynamicSymbols(info, FALSE);
     }
 
     void R_unload_flsa(DllInfo *info)
