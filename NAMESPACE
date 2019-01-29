@@ -1,4 +1,4 @@
-export(print.MultiCCA, print.MultiCCA.permute, MultiCCA, MultiCCA.permute, PMD, PMD.cv, SPC.cv, print.SPC.cv, plot.SPC.cv, SPC, print.SPC, print.CCA, print.CCA.permute,CCA,CCA.permute, print.PMDL1FL, print.PMDL1FL.cv,print.PMDL1L1, print.PMDL1L1.cv,PlotCGH, plot.PMDL1L1.cv, plot.PMDL1FL.cv,plot.CCA.permute, plot.MultiCCA.permute,  cor.xl.LoadData, cor.xl.RunAnalysis, cor.xl.Plot1, cor.xl.Plot2, cor.xl.Plot3,cor.xl.Plot2a,cor.xl.Plot2b,cor.xl.Plot3a,cor.xl.Plot3b)
+export(print.MultiCCA, print.MultiCCA.permute, MultiCCA, MultiCCA.permute, PMD, PMD.cv, SPC.cv, print.SPC.cv, plot.SPC.cv, SPC, print.SPC, print.CCA, print.CCA.permute,CCA,CCA.permute, print.PMDL1FL, print.PMDL1FL.cv,print.PMDL1L1, print.PMDL1L1.cv,PlotCGH, plot.PMDL1L1.cv, plot.PMDL1FL.cv,plot.CCA.permute, plot.MultiCCA.permute)
 
 importFrom("grDevices", "dev.off", "png")
 importFrom("graphics", "lines", "par", "plot", "points", "segments",

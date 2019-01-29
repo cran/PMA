@@ -96,38 +96,38 @@ and often given quite similar results for later components.
 \examples{
         
 # A simple simulated example
-set.seed(1)
-u <- matrix(c(rnorm(50), rep(0,150)),ncol=1)
-v <- matrix(c(rnorm(75),rep(0,225)), ncol=1)
-x <- u\%*\%t(v)+matrix(rnorm(200*300),ncol=300)
-# Perform Sparse PCA - that is, decompose a matrix w/o penalty on rows
-# and w/ L1 penalty on columns
-# First, we perform sparse PCA and get 4 components, but we do not
-# require subsequent components to be orthogonal to previous components
-out <- SPC(x,sumabsv=3, K=4)
-print(out,verbose=TRUE)
-# We could have selected sumabsv by cross-validation, using function SPC.cv
-# Now, we do sparse PCA using method in Section 3.2 of WT&H(2008) for getting
-# multiple components - that is, we require components to be orthogonal
-out.orth <- SPC(x,sumabsv=3, K=4, orth=TRUE)
-print(out.orth,verbose=TRUE)
-par(mfrow=c(1,1))
-plot(out$u[,1], out.orth$u[,1], xlab="", ylab="")
-# Note that the first components w/ and w/o orth option are identical,
-# since the orth option only affects the way that subsequent components
-# are found
-print(round(t(out$u)\%*\%out$u,4)) # not orthogonal
-print(round(t(out.orth$u)\%*\%out.orth$u,4)) # orthogonal
-
-# Use SPC.cv to choose tuning parameters:
-cv.out <- SPC.cv(x)
-print(cv.out)
-plot(cv.out)
-out <- SPC(x, sumabsv=cv.out$bestsumabsv)
-print(out)
-# or we could do
-out <- SPC(x, sumabsv=cv.out$bestsumabsv1se)
-print(out)
-                   
-}
-
+#NOT RUN
+#set.seed(1)
+#u <- matrix(c(rnorm(50), rep(0,150)),ncol=1)
+#v <- matrix(c(rnorm(75),rep(0,225)), ncol=1)
+#x <- u\%*\%t(v)+matrix(rnorm(200*300),ncol=300)
+## Perform Sparse PCA - that is, decompose a matrix w/o penalty on rows
+## and w/ L1 penalty on columns
+## First, we perform sparse PCA and get 4 components, but we do not
+## require subsequent components to be orthogonal to previous components
+#out <- SPC(x,sumabsv=3, K=4)
+#print(out,verbose=TRUE)
+## We could have selected sumabsv by cross-validation, using function SPC.cv
+## Now, we do sparse PCA using method in Section 3.2 of WT&H(2008) for getting
+## multiple components - that is, we require components to be orthogonal
+#out.orth <- SPC(x,sumabsv=3, K=4, orth=TRUE)
+#print(out.orth,verbose=TRUE)
+#par(mfrow=c(1,1))
+#plot(out$u[,1], out.orth$u[,1], xlab="", ylab="")
+## Note that the first components w/ and w/o orth option are identical,
+## since the orth option only affects the way that subsequent components
+## are found
+#print(round(t(out$u)\%*\%out$u,4)) # not orthogonal
+#print(round(t(out.orth$u)\%*\%out.orth$u,4)) # orthogonal
+#
+## Use SPC.cv to choose tuning parameters:
+#cv.out <- SPC.cv(x)
+#print(cv.out)
+#plot(cv.out)
+#out <- SPC(x, sumabsv=cv.out$bestsumabsv)
+#print(out)
+## or we could do
+#out <- SPC(x, sumabsv=cv.out$bestsumabsv1se)
+#print(out)
+#                   
+#}

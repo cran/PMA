@@ -233,8 +233,10 @@ SEXP FLSAClass::prepSolTree(int numGrps)
     PROTECT(solTree=allocVector(VECSXP,5));
     
     // set the names of the components
-    SEXP names = getAttrib(solTree, R_NamesSymbol);
-    names = allocVector(STRSXP,5);
+
+    // SEXP names = getAttrib(solTree, R_NamesSymbol);  // Why bother if it is being clobbered next?
+    SEXP names;
+    PROTECT(names = allocVector(STRSXP,5));
     SET_STRING_ELT(names, 0, mkChar("mu"));
     SET_STRING_ELT(names, 1, mkChar("deriv"));
     SET_STRING_ELT(names, 2, mkChar("mergeLambda"));
@@ -255,7 +257,7 @@ SEXP FLSAClass::prepSolTree(int numGrps)
     SET_VECTOR_ELT(solTree,3, allocVector(INTSXP,numGrps));
     SET_VECTOR_ELT(solTree,4, allocVector(INTSXP,1));
     
-    UNPROTECT(2);
+    UNPROTECT(3);
     return(solTree);
 
 }

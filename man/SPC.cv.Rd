@@ -84,30 +84,30 @@ of running SPC on the raw data $X$.
 \author{Daniela M. Witten and Robert Tibshirani}
 \seealso{\link{SPC}, \link{PMD}, \link{PMD.cv}}
 \examples{
-# A simple simulated example
-set.seed(1)
-u <- matrix(c(rnorm(50), rep(0,150)),ncol=1)
-v <- matrix(c(rnorm(75),rep(0,225)), ncol=1)
-x <- u\%*\%t(v)+matrix(rnorm(200*300),ncol=300)
-# Perform Sparse PCA - that is, decompose a matrix w/o penalty on rows
-# and w/ L1 penalty on columns
-# First, we perform sparse PCA and get 4 components, but we do not
-# require subsequent components to be orthogonal to previous components
-cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=6))
-print(cv.out)
-plot(cv.out)
-out <- SPC(x,sumabsv=cv.out$bestsumabs, K=4) # could use
-# cv.out$bestsumabvsv1se instead
-print(out,verbose=TRUE)
-# Now, we do sparse PCA using method in Section 3.2 of WT&H(2008) for getting
-# multiple components - that is, we require components to be orthogonal
-cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=6), orth=TRUE)
-print(cv.out)
-plot(cv.out)
-out.orth <- SPC(x,sumabsv=cv.out$bestsumabsv, K=4, orth=TRUE)
-print(out.orth,verbose=TRUE)
-par(mfrow=c(1,1))
-plot(out$u[,1], out.orth$u[,1], xlab="", ylab="")
-
-}
-
+#NOT RUN
+## A simple simulated example
+#set.seed(1)
+#u <- matrix(c(rnorm(50), rep(0,150)),ncol=1)
+#v <- matrix(c(rnorm(75),rep(0,225)), ncol=1)
+#x <- u\%*\%t(v)+matrix(rnorm(200*300),ncol=300)
+## Perform Sparse PCA - that is, decompose a matrix w/o penalty on rows
+## and w/ L1 penalty on columns
+## First, we perform sparse PCA and get 4 components, but we do not
+## require subsequent components to be orthogonal to previous components
+#cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=6))
+#print(cv.out)
+#plot(cv.out)
+#out <- SPC(x,sumabsv=cv.out$bestsumabs, K=4) # could use
+## cv.out$bestsumabvsv1se instead
+#print(out,verbose=TRUE)
+## Now, we do sparse PCA using method in Section 3.2 of WT&H(2008) for getting
+## multiple components - that is, we require components to be orthogonal
+#cv.out <- SPC.cv(x, sumabsvs=seq(1.2, sqrt(ncol(x)), len=6), orth=TRUE)
+#print(cv.out)
+#plot(cv.out)
+#out.orth <- SPC(x,sumabsv=cv.out$bestsumabsv, K=4, orth=TRUE)
+#print(out.orth,verbose=TRUE)
+#par(mfrow=c(1,1))
+#plot(out$u[,1], out.orth$u[,1], xlab="", ylab="")
+#
+#}

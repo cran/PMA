@@ -311,8 +311,8 @@ CCA.permute.both <- function(x,z,typex,typez,penaltyxs,penaltyzs,niter,v,trace,n
   ccs=nnonzerous=nnonzerovs=numeric(length(penaltyxs))
   for(i in 1:nperms){
     if(trace && .Platform$OS.type!="windows") cat("\n Permutation ",i," out of ", nperms, " ")
-    if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
-    if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms)) 
+#   #  if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
+#     # if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms)) 
     sampz <- sample(1:nrow(z))
     sampx <- sample(1:nrow(x))
     for(j in 1:length(penaltyxs)){
@@ -337,7 +337,7 @@ CCA.permute.both <- function(x,z,typex,typez,penaltyxs,penaltyzs,niter,v,trace,n
       }
     }
   }
-  if(trace && .Platform$OS.type=="windows") close(pb)
+#   if(trace && .Platform$OS.type=="windows") close(pb)
   cc.norm <- ftrans(ccs)
   ccperm.norm <- ftrans(ccperms)
   zstats <- (cc.norm - rowMeans(ccperm.norm))/(apply(ccperm.norm,1,sd) + .05)
@@ -401,8 +401,8 @@ CCA.permute.zonly<- function(x,z,typex,typez,penaltyx,penaltyzs,niter,v,trace,np
   storevs <- NULL
   for(i in 1:nperms){
         if(trace && .Platform$OS.type!="windows") cat("\n Permutation ",i," out of ", nperms, " ")
-    if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
-    if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms)) 
+#     #if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
+#     #if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms)) 
     sampz <- sample(1:nrow(z))
     sampx <- sample(1:nrow(x))
     for(j in 1:length(penaltyzs)){
@@ -428,7 +428,7 @@ CCA.permute.zonly<- function(x,z,typex,typez,penaltyx,penaltyzs,niter,v,trace,np
       }
     }
   }
-  if(trace && .Platform$OS.type=="windows") close(pb)
+#   if(trace && .Platform$OS.type=="windows") close(pb)
   cc.norm <- ftrans(ccs)
   ccperm.norm <- ftrans(ccperms)
   zstats <- (cc.norm - rowMeans(ccperm.norm))/(apply(ccperm.norm,1,sd) + .05)
@@ -448,8 +448,8 @@ CCA.permute.justone <- function(x,z,typex,typez,penaltyx,penaltyz,niter,v,trace,
   storevs <- NULL
   for(i in 1:nperms){
         if(trace && .Platform$OS.type!="windows") cat("\n Permutation ",i," out of ", nperms, " ")
-    if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
-    if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms))
+#     #if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
+#     #if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms))
     sampz <- sample(1:nrow(z))
     sampx <- sample(1:nrow(x))
       if(i==1){
@@ -473,7 +473,7 @@ CCA.permute.justone <- function(x,z,typex,typez,penaltyx,penaltyz,niter,v,trace,
         ccperms[i] <- 0
       }
     }
-  if(trace && .Platform$OS.type=="windows") close(pb)
+#   if(trace && .Platform$OS.type=="windows") close(pb)
   cc.norm <- ftrans(cc)
   ccperm.norms <- ftrans(ccperms)
   zstat <- (cc.norm - mean(ccperm.norms))/(sd(ccperm.norms) + .05)
@@ -498,8 +498,8 @@ CCA.permute.xonly<- function(x,z,typex,typez,penaltyxs,penaltyz,niter,v,trace,np
   storevs <- NULL
   for(i in 1:nperms){
     if(trace && .Platform$OS.type!="windows") cat("\n Permutation ",i," out of ", nperms, " ")
-    if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
-    if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms)) 
+#     #if(trace && .Platform$OS.type=="windows" && i==1) pb <- winProgressBar(title="Doing Permutations", min=0, max=1, initial=(i/nperms))
+#     #if(trace && .Platform$OS.type=="windows" && i>1) setWinProgressBar(pb, value=(i/nperms)) 
     sampz <- sample(1:nrow(z))
     sampx <- sample(1:nrow(x))
     for(j in 1:length(penaltyxs)){
@@ -525,7 +525,7 @@ CCA.permute.xonly<- function(x,z,typex,typez,penaltyxs,penaltyz,niter,v,trace,np
       }
     }
   }
-  if(trace && .Platform$OS.type=="windows") close(pb)
+#   if(trace && .Platform$OS.type=="windows") close(pb)
   cc.norm <- ftrans(ccs)
   ccperm.norm <- ftrans(ccperms)
   zstats <- (cc.norm - rowMeans(ccperm.norm))/(apply(ccperm.norm,1,sd) + .05)
