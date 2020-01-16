@@ -4,7 +4,7 @@
 ###
 ########################################################
 
-.onLoad <- function(lib,pkg){
-    library.dynam("PMA",pkg,lib)
-  }
-  
+## .onLoad <- function(lib,pkg){
+##     library.dynam("PMA",pkg,lib)
+##   }
+

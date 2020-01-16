@@ -1,31 +1,25 @@
 Package: PMA
 Type: Package
 Title: Penalized Multivariate Analysis
-Version: 1.1
-Depends: R (>= 2.10)
-Date: 2019-01-22
-Author: Daniela Witten and Rob Tibshirani and Sam Gross and
-        Balasubramanian Narasimhan
+Version: 1.2
+Date: 2019-12-31
+URL: https://github.com/bnaras/PMA
+BugReports: https://github.com/bnaras/PMA/issues
+Author: Daniela Witten and Rob Tibshirani
+Maintainer: Rob Tibshirani <tibs@stanford.edu>
 Description: Performs Penalized Multivariate Analysis: a penalized
-        matrix decomposition, sparse principal components analysis, and
-        sparse canonical correlation analysis, described in the
-        following papers: (1) Witten, Tibshirani and Hastie (2009) A
-        penalized matrix decomposition, with applications to sparse
-        principal components and canonical correlation analysis.
-        Biostatistics 10(3):515-534. (2) Witten and Tibshirani (2009)
-        Extensions of sparse canonical correlation analysis, with
-        applications to genomic data. Statistical Applications in
-        Genetics and Molecular Biology 8(1): Article 28.
+        matrix decomposition, sparse principal components analysis,
+        and sparse canonical correlation analysis, described in
+        Witten, Tibshirani and Hastie (2009)
+        <doi:10.1093/biostatistics/kxp008> and Witten and Tibshirani
+        (2009) Extensions of sparse canonical correlation analysis,
+        with applications to genomic data
+        <doi:10.2202/1544-6115.1470>.
+Depends: R (>= 2.10)
 License: GPL (>= 2)
-Packaged: 2019-02-05 09:20:08 UTC; ligges
-biocViews:
-Imports: impute
+Encoding: UTF-8
+RoxygenNote: 7.0.2
 NeedsCompilation: yes
-Maintainer: ORPHANED
-X-CRAN-Original-Maintainer: Rob Tibshirani <tibs@stanford.edu>
-X-CRAN-Comment: Orphaned and corrected on 2018-04-20 as check problems
-        were not corrected despite multiple notifications.
- .
- Including C++ misuse of = for == and non-registration of S3 methods.
+Packaged: 2020-01-03 00:39:10 UTC; tibs
 Repository: CRAN
-Date/Publication: 2019-02-05 10:20:08
+Date/Publication: 2020-01-16 13:10:06 UTC
