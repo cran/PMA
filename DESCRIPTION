@@ -1,8 +1,8 @@
 Package: PMA
 Type: Package
 Title: Penalized Multivariate Analysis
-Version: 1.2
-Date: 2019-12-31
+Version: 1.2.1
+Date: 2020-02-04
 URL: https://github.com/bnaras/PMA
 BugReports: https://github.com/bnaras/PMA/issues
 Author: Daniela Witten and Rob Tibshirani
@@ -20,6 +20,6 @@ License: GPL (>= 2)
 Encoding: UTF-8
 RoxygenNote: 7.0.2
 NeedsCompilation: yes
-Packaged: 2020-01-03 00:39:10 UTC; tibs
+Packaged: 2020-02-03 16:55:16 UTC; tibs
 Repository: CRAN
-Date/Publication: 2020-01-16 13:10:06 UTC
+Date/Publication: 2020-02-03 17:30:07 UTC

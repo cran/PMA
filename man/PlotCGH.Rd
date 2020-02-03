@@ -40,6 +40,7 @@ This function makes a plot of regions of genomic gain/loss.
 }
 \examples{
 
+\dontrun{
 # Use breast data
 data(breastdata)
 attach(breastdata)
@@ -53,7 +54,7 @@ main= "Sample 1: Chrom 1")
 PlotCGH(dna[1,chrom<=3], chrom=chrom[chrom<=3], nuc=nuc[chrom<=3],
  main="Sample 1: Chroms 1, 2, and 3")
 detach(breastdata)
-
+}
 }
 \references{
 Witten D. M., Tibshirani R.,  and Hastie, T. (2009)

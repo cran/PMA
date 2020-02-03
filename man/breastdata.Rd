@@ -21,6 +21,10 @@ perform integrative analysis of gene expression and DNA copy number
 data, as in . That is,
 we can look for sets of genes that are associated with regions of
 chromosomal gain/loss.
+
+Must be downloaded from   https://statweb.stanford.edu/~tibs/PMA/
+and put into the folder PMA/data
+
 }
 \details{
 Missing values were imputed using 5-nearest neighbors (see library
@@ -28,10 +32,12 @@ Missing values were imputed using 5-nearest neighbors (see library
 }
 \examples{
 
+\dontrun{
 data(breastdata)
 attach(breastdata)
 PlotCGH(dna[,1], chrom=chrom, main="Sample 1", nuc=nuc)
 detach(breastdata)
+}
 
 }
 \references{

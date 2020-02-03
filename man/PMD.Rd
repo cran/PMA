@@ -167,6 +167,7 @@ print(out2)
 # Now check out PMD with L1 penalty on rows and fused lasso penalty on
 # columns: type="ordered". We'll use the Chin et al (2006) Cancer Cell
 # data set; try "?breastdata" for more info.
+\dontrun{
 data(breastdata)
 attach(breastdata)
 # dna contains CGH data and chrom contains chromosome of each CGH spot;
@@ -198,7 +199,7 @@ PlotCGH(out$v[,1],chrom=chrom[chrom==1], main="V",nuc=nuc[chrom==1])
 
 
 detach(breastdata)
-
+}
 
 
 

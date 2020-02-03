@@ -218,6 +218,7 @@ print(out)
 
 ## now, do CCA with type="ordered"
 ## Example involving the breast cancer data: gene expression + CGH
+\dontrun{
 set.seed(22)
 data(breastdata)
 attach(breastdata)
@@ -241,6 +242,7 @@ par(mfrow=c(1,1))
 PlotCGH(out$v, nuc=nuc[chrom==1], chrom=chrom[chrom==1],
 main="Regions of gain/loss on Chrom 1 assoc'd with gene expression")
 detach(breastdata)
+}
 }
 
 }
