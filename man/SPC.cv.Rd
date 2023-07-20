@@ -53,7 +53,6 @@ FALSE.}
 \item{vpos}{Constrain elements of v to be positive? Default is FALSE.}
 
 \item{vneg}{Constrain elements of v to be negative? Default is FALSE.}
-
 }
 \value{
 \item{cv}{Average sum of squared errors that results for each tuning

@@ -1,12 +1,15 @@
 Package: PMA
 Type: Package
 Title: Penalized Multivariate Analysis
-Version: 1.2.1
-Date: 2020-02-04
+Version: 1.2-2
+Date: 2023-07-19
 URL: https://github.com/bnaras/PMA
 BugReports: https://github.com/bnaras/PMA/issues
-Author: Daniela Witten and Rob Tibshirani
-Maintainer: Rob Tibshirani <tibs@stanford.edu>
+Authors@R: c(person("Daniela", "Witten", role = c("aut")),
+	   person("Rob", "Tibshirani", email = "tibs@stanford.edu", role = c("aut", "cre")),
+	   person("Sam", "Gross", role = c("aut")),
+	   person("Balasubramanian", "Narasimhan", role = c("aut"),
+	   	   email = "naras@stanford.edu"))
 Description: Performs Penalized Multivariate Analysis: a penalized
         matrix decomposition, sparse principal components analysis,
         and sparse canonical correlation analysis, described in
@@ -18,8 +21,14 @@ Description: Performs Penalized Multivariate Analysis: a penalized
 Depends: R (>= 2.10)
 License: GPL (>= 2)
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.3
+Imports: utils
 NeedsCompilation: yes
-Packaged: 2020-02-03 16:55:16 UTC; tibs
+Packaged: 2023-07-20 17:25:51 UTC; tibs
+Author: Daniela Witten [aut],
+  Rob Tibshirani [aut, cre],
+  Sam Gross [aut],
+  Balasubramanian Narasimhan [aut]
+Maintainer: Rob Tibshirani <tibs@stanford.edu>
 Repository: CRAN
-Date/Publication: 2020-02-03 17:30:07 UTC
+Date/Publication: 2023-07-20 21:20:09 UTC

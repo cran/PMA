@@ -76,8 +76,8 @@
 #' @param trace Print out progress?
 #' @param standardize Should the columns of x and z be centered (to have mean
 #' zero) and scaled (to have standard deviation 1)? Default is TRUE.
-#' @param xnames An optional vector of column names for x.
-#' @param znames An optional vector of column names for z.
+#' @param xnames An optional vector of column names for x, defaults to `colnames(x)`
+#' @param znames An optional vector of column names for z, defaults to `colnames(z)`
 #' @param chromx Used only if typex is "ordered"; allows user to specify a
 #' vector of length ncol(x) giving the chromosomal location of each CGH spot.
 #' This is so that smoothness will be enforced within each chromosome, but not
@@ -169,8 +169,8 @@
 #' ## now, do CCA with type="ordered"
 #' ## Example involving the breast cancer data: gene expression + CGH
 #' set.seed(22)
-#' data(breastdata)
-#' attach(breastdata)
+#' breastdata <- download_breast_data()
+#' with(breastdata, {
 #' dna <- t(dna)
 #' rna <- t(rna)
 #' perm.out <- CCA.permute(x=rna,z=dna[,chrom==1],typex="standard",
@@ -190,11 +190,11 @@
 #' par(mfrow=c(1,1))
 #' PlotCGH(out$v, nuc=nuc[chrom==1], chrom=chrom[chrom==1],
 #' main="Regions of gain/loss on Chrom 1 assoc'd with gene expression")
-#' detach(breastdata)
+#' } )
 #' }
 #'
 #' @export CCA
-CCA <- function(x, z, typex=c("standard", "ordered"), typez=c("standard","ordered"), penaltyx=NULL, penaltyz=NULL, K=1, niter=15, v=NULL, trace=TRUE, standardize=TRUE, xnames=NULL, znames=NULL, chromx=NULL, chromz=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL, y=NULL, cens=NULL){
+CCA <- function(x, z, typex=c("standard", "ordered"), typez=c("standard","ordered"), penaltyx=NULL, penaltyz=NULL, K=1, niter=15, v=NULL, trace=TRUE, standardize=TRUE, xnames=colnames(x), znames=colnames(z), chromx=NULL, chromz=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE, outcome=NULL, y=NULL, cens=NULL){
   if(ncol(x)<2) stop("Need at least two features in dataset x.")
   if(ncol(z)<2) stop("Need at least two features in dataset z.")
   if(upos && uneg) stop("At most one of upos and uneg should be TRUE!")
@@ -347,7 +347,7 @@ fastsvd <- function(x,z){
   y=t(z)%*%xx2
   a=try(svd(y), silent=TRUE)
   iter <- 1
-  if(class(a)=="try-error" && iter<10){
+  if(inherits(a, "try-error") && iter<10){
     a=try(svd(y), silent=TRUE)
     iter <- iter+1
   }
@@ -359,7 +359,7 @@ fastsvd <- function(x,z){
   y=t(x)%*%zz2
   a=try(svd(y), silent=TRUE)
   iter <- 1
-  if(class(a)=="try-error" && iter<10){
+  if(inherits(a, "try-error") && iter<10){
     a=try(svd(y), silent=TRUE)
     iter <- iter+1
   }

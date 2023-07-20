@@ -2,7 +2,7 @@ soft <- function(x,d){
   return(sign(x)*pmax(0, abs(x)-d))
 }
 
-mean.na <- function(vec){
+mean_na <- function(vec){
   return(mean(vec[!is.na(vec)]))
 }
 
@@ -15,11 +15,11 @@ l2n <- function(vec){
 safesvd <- function(x){
   i <- 1
   out <- try(svd(x), silent=TRUE)
-  while(i<10 && class(out)=="try-error"){
+  while(i<10 && inherits(out, "try-error")){
     out <- try(svd(x), silent=TRUE)
     i <- i+1
   }
-  if(class(out)=="try-error") out <- svd(matrix(rnorm(nrow(x)*ncol(x)), ncol=ncol(x)))
+  if(inherits(out, "try-error")) out <- svd(matrix(rnorm(nrow(x)*ncol(x)), ncol=ncol(x)))
   return(out)
 }
 
@@ -118,13 +118,13 @@ CheckPMDV <-  function(v,x,K){
   if(!is.null(v) && is.matrix(v) && ncol(v)>=K){
     v <- matrix(v[,1:K], ncol=K)
   } else if(ncol(x)>nrow(x)){
-    x[is.na(x)] <- mean.na(x)
+    x[is.na(x)] <- mean_na(x)
     v <- matrix(t(x)%*%(safesvd(x%*%t(x))$v[,1:K]),ncol=K)
     if(sum(is.na(v))>0) v <- matrix(safesvd(x)$v[,1:K], ncol=K)
     v <- sweep(v,2,apply(v, 2, l2n), "/")
     if(sum(is.na(v))>0) stop("some are NA")
   } else if (ncol(x)<=nrow(x)){
-    x[is.na(x)] <- mean.na(x)
+    x[is.na(x)] <- mean_na(x)
     v <- matrix(safesvd(t(x)%*%x)$v[,1:K],ncol=K)
   }
   return(v)
@@ -254,8 +254,8 @@ SPC <- function(x, sumabsv=4, niter=20, K=1, orth=FALSE, trace=TRUE, v=NULL, cen
     v <- matrix(out$v, ncol=K)
     ve <- NULL # variance explained
     xfill <- x
-    if(center) xfill <- x-mean.na(x)
-    xfill[is.na(x)] <- mean.na(xfill)
+    if(center) xfill <- x-mean_na(x)
+    xfill[is.na(x)] <- mean_na(xfill)
     for(k in 1:K){
       vk <- matrix(v[,1:k], ncol=k)
       xk <- xfill%*%vk%*%solve(t(vk)%*%vk)%*%t(vk)
@@ -428,16 +428,18 @@ print.SPC <- function(x,verbose=FALSE,...){
 #' # Now check out PMD with L1 penalty on rows and fused lasso penalty on
 #' # columns: type="ordered". We'll use the Chin et al (2006) Cancer Cell
 #' # data set; try "?breastdata" for more info.
-#' data(breastdata)
-#' attach(breastdata)
+#' \dontrun{
+#' breastdata <- download_breast_data()
+#' with(breastdata, {
 #' # dna contains CGH data and chrom contains chromosome of each CGH spot;
 #' # nuc contains position of each CGH spot.
 #' dna <- t(dna) # Need samples on rows and CGH spots on columns
 #' # First, look for shared regions of gain/loss on chromosome 1.
 #' # Use cross-validation to choose tuning parameter value
 #' par(mar=c(2,2,2,2))
-#' cv.out <- PMD.cv(dna[,chrom==1],type="ordered",chrom=chrom[chrom==1],
-#' nuc=nuc[chrom==1],
+#' ch1 = which(chrom == 1)
+#' cv.out <- PMD.cv(dna[, ch1],type="ordered",chrom=chrom[ch1],
+#' nuc=nuc[ch1],
 #' sumabsus=seq(1, sqrt(nrow(dna)), len=15))
 #' print(cv.out)
 #' plot(cv.out)
@@ -456,14 +458,8 @@ print.SPC <- function(x,verbose=FALSE,...){
 #' main=paste("Sample 88; u=", sep="", round(out$u[88,1],3)),
 #' nuc=nuc[chrom==1])
 #' PlotCGH(out$v[,1],chrom=chrom[chrom==1], main="V",nuc=nuc[chrom==1])
-#'
-#'
-#' detach(breastdata)
-#'
-#'
-#'
-#'
-#'
+#' } )
+#' }
 #' @export PMD
 PMD <- function(x, type=c("standard", "ordered"), sumabs=.4, sumabsu=5, sumabsv=NULL, lambda=NULL, niter=20, K=1, v=NULL, trace=TRUE, center=TRUE, chrom=NULL, rnames=NULL, cnames=NULL, upos=FALSE, uneg=FALSE, vpos=FALSE, vneg=FALSE){
   if(upos&&uneg || vpos&&vneg) stop("Cannot contrain elements to be both positive and negative!")
@@ -602,7 +598,7 @@ PMD.cv <- function(x, type=c("standard", "ordered"), sumabss=seq(0.1,0.7,len=10)
 
 PMDL1L1 <- function(x,sumabs=.4,sumabsu=NULL,sumabsv=NULL,niter=20,K=1,v=NULL, trace=TRUE, orth=FALSE, center=TRUE, rnames=NULL, cnames=NULL, upos=upos, uneg=uneg, vpos=vpos, vneg=vneg){
   if(center){
-    meanx <- mean.na(x)
+    meanx <- mean_na(x)
     x <- x-meanx
   } else {
     meanx <- NULL
@@ -619,7 +615,7 @@ PMDL1L1 <- function(x,sumabs=.4,sumabsu=NULL,sumabsv=NULL,niter=20,K=1,v=NULL, t
     sumabsv <- sqrt(ncol(x))*sumabs
   }
   call <-  match.call()
-  if(trace && abs(mean.na(x)) > 1e-15) warning("PMDL1L1 was run without first subtracting out the mean of x.")
+  if(trace && abs(mean_na(x)) > 1e-15) warning("PMDL1L1 was run without first subtracting out the mean of x.")
   if(!is.null(sumabsu) && (sumabsu<1 || sumabsu>sqrt(nrow(x)))) stop("sumabsu must be between 1 and sqrt(n)")
   if(!is.null(sumabsv) && (sumabsv<1 || sumabsv>sqrt(ncol(x)))) stop("sumabsv must be between 1 and sqrt(p)")
   v <- CheckPMDV(v,x,K)

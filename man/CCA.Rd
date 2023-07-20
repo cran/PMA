@@ -18,8 +18,8 @@ CCA(
   v = NULL,
   trace = TRUE,
   standardize = TRUE,
-  xnames = NULL,
-  znames = NULL,
+  xnames = colnames(x),
+  znames = colnames(z),
   chromx = NULL,
   chromz = NULL,
   upos = FALSE,
@@ -78,9 +78,9 @@ be time-consuming if X and Z both have high dimension).}
 \item{standardize}{Should the columns of x and z be centered (to have mean
 zero) and scaled (to have standard deviation 1)? Default is TRUE.}
 
-\item{xnames}{An optional vector of column names for x.}
+\item{xnames}{An optional vector of column names for x, defaults to \code{colnames(x)}}
 
-\item{znames}{An optional vector of column names for z.}
+\item{znames}{An optional vector of column names for z, defaults to \code{colnames(z)}}
 
 \item{chromx}{Used only if typex is "ordered"; allows user to specify a
 vector of length ncol(x) giving the chromosomal location of each CGH spot.
@@ -218,10 +218,9 @@ print(out)
 
 ## now, do CCA with type="ordered"
 ## Example involving the breast cancer data: gene expression + CGH
-\dontrun{
 set.seed(22)
-data(breastdata)
-attach(breastdata)
+breastdata <- download_breast_data()
+with(breastdata, {
 dna <- t(dna)
 rna <- t(rna)
 perm.out <- CCA.permute(x=rna,z=dna[,chrom==1],typex="standard",
@@ -241,8 +240,7 @@ print(genechr[out$u!=0]) # Cool! The genes associated w/ gain or loss
 par(mfrow=c(1,1))
 PlotCGH(out$v, nuc=nuc[chrom==1], chrom=chrom[chrom==1],
 main="Regions of gain/loss on Chrom 1 assoc'd with gene expression")
-detach(breastdata)
-}
+} )
 }
 
 }

@@ -186,7 +186,7 @@ Groups::Groups(SEXP solution)
 
 int Groups::addNewGroup(double lambda, double mu, MaxFlowGraph* m, bool initial)
 {
-    groupItem g;
+  groupItem g = {};
     // fill out the group item
     g.lambda = lambda;
     g.mu=mu;
