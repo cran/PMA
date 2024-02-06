@@ -1,6 +1,6 @@
-96fb386cac9ffac9d9095b0328a5793c *DESCRIPTION
+632cfaebb3803dd659052429e926f8fb *DESCRIPTION
 29d931c4fb1c9f916ae4aa4d62b8b83b *NAMESPACE
-15e24099cebff79ef5acb4d2d5f423e7 *NEWS.md
+84be101380ffa7dc7deaf729c48a9faa *NEWS.md
 8304b86073d8455588a94f78432a5e72 *R/CCA.R
 c06dd8ab1c126011c42d95af15b0c943 *R/FLSAGeneralInclude.R
 c438ce60de5daf87de5bcec6631989b4 *R/MultiCCA.R
@@ -11,7 +11,7 @@ f38ec1f6d228b5bec0e0a4d2a2ddb02f *R/PMA-package.R
 91acc74ad99a3bf56b7086193fd13f1a *R/SamrFunctions.R
 c559c71166559dc3cf390854a6520fa8 *R/download_breast_data.R
 0952eadec51e46c32e929dbd61ef7869 *README.md
-5f32f9775455e03cd0da815f5df0dd5e *build/partial.rdb
+8faf250d78a120ba4c7ea2186efddd24 *build/partial.rdb
 bf3787ba018056b14e51065148277870 *inst/REFERENCES.bib
 f3ea986bd78403740824f0bd44500476 *man/CCA.Rd
 ef66db46683b786a64b754cd7826caa8 *man/CCA.permute.Rd
@@ -26,7 +26,7 @@ b1c63ab2f72341b86091b679c9387136 *man/PlotCGH.Rd
 3b2cebea035ab01a32596cec2aa0956c *man/download_breast_data.Rd
 cf1e789a7837f934bebb61726d6a521f *src/FLSA.cc
 9adfb14ce9dd4c11f71fb3d033ca4759 *src/FLSA.h
-53854e026d62143f3e672c01ee7d9525 *src/FLSAGeneral.cc
+2b23eeff6106f3292b21eee8b4551603 *src/FLSAGeneral.cc
 c70016d52000a0293959bef8d1fdbcea *src/FLSAGeneral.h
 f7a79cf4225245a1eeae330c65eb90db *src/FLSAGeneralMain.cc
 c2357e57b5ded42e13f2f0649842b827 *src/GeneralFunctions.cc
